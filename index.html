@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>জমি পরিমাপ অ্যাপ (নল, হাত, বিঘাত, আঙুল)</title>
+    <!-- PWA Links -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#123e6d">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
+        .calculator-card {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .app-logo {
+            max-width: 130px;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 3px solid #f07e26;
+        }
+        h2 {
+            text-align: center;
+            color: #123e6d;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            color: #123e6d;
+            border-bottom: 3px solid #f07e26;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #123e6d;
+            margin-top: 15px;
+        }
+        .input-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .input-group div {
+            flex: 1;
+            min-width: 60px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+            outline: none;
+        }
+        select:focus, input:focus {
+            border-color: #f07e26;
+        }
+        .input-label {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button.action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .btn-calc { background-color: #123e6d; }
+        .btn-calc:hover { background-color: #0b2746; }
+        .btn-clear { background-color: #f07e26; }
+        .btn-clear:hover { background-color: #d16b1d; }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f6f9;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+            border: 1px solid #ddd;
+        }
+        .highlight-result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .mixed-result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f07e26;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-card">
+        <div class="logo-container">
+            <img src="icon.png" alt="জমি পরিমাপ অ্যাপ লোগো" class="app-logo">
+        </div>
+
+        <h2>জমি পরিমাপ অ্যাপ</h2>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(event, 'tab1')">ক্ষেত্রফল হিসাব</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab2')">প্রস্থ/দৈর্ঘ্য হিসাব</button>
+        </div>
+
+        <div id="tab1" class="tab-content active">
+            <label for="nolType1">নলের ধরন নির্বাচন করুন:</label>
+            <select id="nolType1">
+                <option value="4">৪ হাতি নল (১ নল = ৬ ফুট)</option>
+                <option value="5">৫ হাতি নল (১ নল = ৭.৫ ফুট)</option>
+            </select>
+
+            <label>জমির দৈর্ঘ্য:</label>
+            <div class="input-group">
+                <div><span class="input-label">নল</span><input type="number" id="l_nol" placeholder="০"></div>
+                <div><span class="input-label">হাত</span><input type="number" id="l_hat" placeholder="০"></div>
+                <div><span class="input-label">বিঘাত</span><input type="number" id="l_bighat" placeholder="০"></div>
+                <div><span class="input-label">আঙুল</span><input type="number" id="l_angul" placeholder="০"></div>
+            </div>
+
+            <label>জমির প্রস্থ:</label>
+            <div class="input-group">
+                <div><span class="input-label">নল</span><input type="number" id="w_nol" placeholder="০"></div>
+                <div><span class="input-label">হাত</span><input type="number" id="w_hat" placeholder="০"></div>
+                <div><span class="input-label">বিঘাত</span><input type="number" id="w_bighat" placeholder="০"></div>
+                <div><span class="input-label">আঙুল</span><input type="number" id="w_angul" placeholder="০"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="action-btn btn-calc" onclick="calculateArea()">হিসাব করুন</button>
+                <button class="action-btn btn-clear" onclick="clearFields1()">ক্লিয়ার</button>
+            </div>
+
+            <div class="result-box" id="resultBox1">
+                <div id="sqFeetResult" style="color: #333; font-size: 16px;"></div>
+                <div id="shotokResult" class="highlight-result" style="color: #123e6d;"></div>
+                <div id="localMixedResult" class="mixed-result"></div>
+            </div>
+        </div>
+
+        <div id="tab2" class="tab-content">
+            <label for="nolType2">নলের ধরন নির্বাচন করুন:</label>
+            <select id="nolType2">
+                <option value="4">৪ হাতি নল</option>
+                <option value="5">৫ হাতি নল</option>
+            </select>
+
+            <label>মোট জমির পরিমাণ:</label>
+            <div class="input-group" style="gap: 10px;">
+                <div style="flex: 2;"><input type="number" id="targetArea" placeholder="যেমন: ৩.৩০"></div>
+                <div style="flex: 1;">
+                    <select id="areaUnit">
+                        <option value="shotok" selected>শতক</option>
+                        <option value="katha">কাঠা</option>
+                        <option value="kura">কুড়া</option>
+                    </select>
+                </div>
+            </div>
+
+            <label>জানা দিকের মাপ (দৈর্ঘ্য বা প্রস্থ):</label>
+            <div class="input-group">
+                <div><span class="input-label">নল</span><input type="number" id="k_nol" placeholder="০"></div>
+                <div><span class="input-label">হাত</span><input type="number" id="k_hat" placeholder="০"></div>
+                <div><span class="input-label">বিঘাত</span><input type="number" id="k_bighat" placeholder="০"></div>
+                <div><span class="input-label">আঙুল</span><input type="number" id="k_angul" placeholder="০"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="action-btn btn-calc" onclick="calculateWidth()">হিসাব করুন</button>
+                <button class="action-btn btn-clear" onclick="clearFields2()">ক্লিয়ার</button>
+            </div>
+
+            <div class="result-box" id="resultBox2">
+                <div id="requiredMeasurement" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toBengaliNum(engNum) {
+            const bnNumbers = {'0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯', '.': '.'};
+            return String(engNum).split('').map(char => bnNumbers[char] || char).join('');
+        }
+
+        function switchTab(evt, tabId) {
+            let tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) tabContents[i].classList.remove("active");
+            let tabBtns = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabBtns.length; i++) tabBtns[i].classList.remove("active");
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        const FT_PER_HAT = 1.5;
+        const FT_PER_BIGHAT = 0.75;
+        const FT_PER_ANGUL = 1 / 12;
+        const SQ_FEET_PER_SHOTOK = 435.6;
+
+        function getFeet(nol, hat, bighat, angul, nolType) {
+            let nolFeet = nolType * FT_PER_HAT;
+            return (nol * nolFeet) + (hat * FT_PER_HAT) + (bighat * FT_PER_BIGHAT) + (angul * FT_PER_ANGUL);
+        }
+
+        function calculateArea() {
+            let nolType = parseFloat(document.getElementById('nolType1').value);
+            
+            let l_nol = parseFloat(document.getElementById('l_nol').value) || 0;
+            let l_hat = parseFloat(document.getElementById('l_hat').value) || 0;
+            let l_bighat = parseFloat(document.getElementById('l_bighat').value) || 0;
+            let l_angul = parseFloat(document.getElementById('l_angul').value) || 0;
+
+            let w_nol = parseFloat(document.getElementById('w_nol').value) || 0;
+            let w_hat = parseFloat(document.getElementById('w_hat').value) || 0;
+            let w_bighat = parseFloat(document.getElementById('w_bighat').value) || 0;
+            let w_angul = parseFloat(document.getElementById('w_angul').value) || 0;
+
+            if (l_nol===0 && l_hat===0 && l_bighat===0 && l_angul===0 && w_nol===0 && w_hat===0 && w_bighat===0 && w_angul===0) {
+                alert("দয়া করে মাপ প্রদান করুন।"); return;
+            }
+
+            let lengthFeet = getFeet(l_nol, l_hat, l_bighat, l_angul, nolType);
+            let widthFeet = getFeet(w_nol, w_hat, w_bighat, w_angul, nolType);
+
+            let totalSqFeet = lengthFeet * widthFeet;
+            let totalShotok = totalSqFeet / SQ_FEET_PER_SHOTOK;
+            let totalKatha = totalShotok / 3.30;
+            
+            let kuraCount = Math.floor(totalKatha / 20);
+            let kathaCount = Math.floor(totalKatha % 20);
+            let dhurCount = ((totalKatha % 20) - kathaCount) * 20;
+
+            let mixedText = "মোট: ";
+            if (kuraCount > 0) mixedText += toBengaliNum(kuraCount) + " কুড়া ";
+            if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount) + " কাঠা ";
+            mixedText += toBengaliNum(dhurCount.toFixed(2)) + " ধুর";
+
+            document.getElementById('resultBox1').style.display = 'block';
+            document.getElementById('sqFeetResult').innerHTML = "মোট ক্ষেত্রফল: " + toBengaliNum(totalSqFeet.toFixed(2)) + " বর্গফুট";
+            document.getElementById('shotokResult').innerHTML = toBengaliNum(totalShotok.toFixed(3)) + " শতক";
+            document.getElementById('localMixedResult').innerHTML = mixedText;
+        }
+
+        function calculateWidth() {
+            let nolType = parseFloat(document.getElementById('nolType2').value);
+            let targetArea = parseFloat(document.getElementById('targetArea').value) || 0;
+            let areaUnit = document.getElementById('areaUnit').value;
+            
+            let k_nol = parseFloat(document.getElementById('k_nol').value) || 0;
+            let k_hat = parseFloat(document.getElementById('k_hat').value) || 0;
+            let k_bighat = parseFloat(document.getElementById('k_bighat').value) || 0;
+            let k_angul = parseFloat(document.getElementById('k_angul').value) || 0;
+
+            if (targetArea === 0 || (k_nol===0 && k_hat===0 && k_bighat===0 && k_angul===0)) {
+                alert("দয়া করে জমির পরিমাণ এবং জানা দিকের মাপ দিন।"); return;
+            }
+
+            let targetSqFeet = 0;
+            if (areaUnit === 'kura') targetSqFeet = targetArea * 20 * 3.30 * SQ_FEET_PER_SHOTOK;
+            else if (areaUnit === 'katha') targetSqFeet = targetArea * 3.30 * SQ_FEET_PER_SHOTOK;
+            else if (areaUnit === 'shotok') targetSqFeet = targetArea * SQ_FEET_PER_SHOTOK;
+
+            let knownFeet = getFeet(k_nol, k_hat, k_bighat, k_angul, nolType);
+            let requiredFeet = targetSqFeet / knownFeet;
+
+            let totalInches = requiredFeet * 12;
+            let nolInches = nolType * 18;
+            
+            let reqNol = Math.floor(totalInches / nolInches);
+            let remainingInches = totalInches % nolInches;
+            
+            let reqHat = Math.floor(remainingInches / 18);
+            remainingInches = remainingInches % 18;
+            
+            let reqBighat = Math.floor(remainingInches / 9);
+            let reqAngul = remainingInches % 9;
+
+            document.getElementById('resultBox2').style.display = 'block';
+            document.getElementById('requiredMeasurement').innerHTML = 
+                "অন্য দিকের মাপ লাগবে:<br>" + 
+                toBengaliNum(reqNol) + " নল, " + 
+                toBengaliNum(reqHat) + " হাত, " + 
+                toBengaliNum(reqBighat) + " বিঘাত, " + 
+                toBengaliNum(reqAngul.toFixed(2)) + " আঙুল";
+        }
+
+        function clearFields1() {
+            document.querySelectorAll('#tab1 input').forEach(input => input.value = '');
+            document.getElementById('resultBox1').style.display = 'none';
+        }
+
+        function clearFields2() {
+            document.querySelectorAll('#tab2 input').forEach(input => input.value = '');
+            document.getElementById('resultBox2').style.display = 'none';
+        }
+
+        // PWA এর জন্য সার্ভিস ওয়ার্কার চালু করা
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    }, err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>

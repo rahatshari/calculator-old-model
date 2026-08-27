@@ -10,194 +10,342 @@
     <meta name="theme-color" content="#123e6d">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
+
+    <!-- Updated Google Fonts: Noto Sans Bengali for perfect numbers and text -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            background: linear-gradient(135deg, #eef2f5 0%, #e4ebf5 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 15px;
+            padding: 10px;
+            box-sizing: border-box;
+            color: #334155;
         }
-        .calculator-card {
-            background-color: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-            max-width: 500px;
+        .app-container {
+            background-color: #ffffff;
+            padding: 25px 20px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            max-width: 450px;
             width: 100%;
+            position: relative;
         }
+        
         h2 {
             text-align: center;
-            color: #123e6d;
-            margin-bottom: 20px;
-            margin-top: 10px;
+            color: #1e293b;
+            margin-bottom: 25px;
+            margin-top: 5px;
+            font-size: 24px;
+            font-weight: 700;
         }
+        
+        /* Main Menu Styles */
+        .menu-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(135deg, #123e6d 0%, #1e5a9c 100%);
+            color: #ffffff;
+            border: none;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(18, 62, 109, 0.2);
+        }
+
+        /* Screen Management */
+        .screen, .tab-content { display: none; }
+        .screen.active, .tab-content.active { display: block; animation: fadeIn 0.3s ease forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+        .back-btn {
+            background-color: transparent;
+            color: #123e6d;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            cursor: pointer;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        .screen-title { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; }
+
+        /* Modern Tabs */
         .tabs {
             display: flex;
+            background-color: #f1f5f9;
+            padding: 5px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
         }
         .tab-btn {
             flex: 1;
-            padding: 10px;
-            background: none;
+            padding: 8px;
+            background: transparent;
             border: none;
-            font-size: 16px;
-            font-weight: bold;
-            color: #555;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            color: #64748b;
             cursor: pointer;
-            transition: 0.3s;
+            border-radius: 8px;
         }
         .tab-btn.active {
+            background-color: #ffffff;
             color: #123e6d;
-            border-bottom: 3px solid #f07e26;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
+
+        /* Grid Layouts */
+        label { display: block; margin: 15px 0 8px 0; font-weight: 600; color: #334155; font-size: 15px; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+        
+        .input-col { display: flex; flex-direction: column; }
+        
+        .input-label {
+            font-size: 13px;
+            color: #475569;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-align: left;
+            padding-left: 4px;
+            width: 100%;
             display: block;
+            white-space: nowrap;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #123e6d;
-            margin-top: 15px;
+        
+        @media (max-width: 380px) {
+            .input-label { font-size: 11px; }
         }
-        .input-group {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        .input-group div {
-            flex: 1;
-            min-width: 60px;
-        }
+
         select, input {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 10px 4px;
+            border: 1.5px solid #e2e8f0;
+            background-color: #f8fafc;
+            border-radius: 8px;
             box-sizing: border-box;
-            font-size: 15px;
+            font-size: 16px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            color: #0f172a;
             outline: none;
-        }
-        select:focus, input:focus {
-            border-color: #f07e26;
-        }
-        .input-label {
-            font-size: 12px;
-            color: #555;
-            margin-bottom: 5px;
-            display: block;
             text-align: center;
         }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        select:focus, input:focus { border-color: #f07e26; background-color: #ffffff; }
+
+        /* Action Buttons */
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
         button.action-btn {
-            flex: 1;
             padding: 12px;
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        .btn-calc { background-color: #123e6d; }
-        .btn-calc:hover { background-color: #0b2746; }
-        .btn-clear { background-color: #f07e26; }
-        .btn-clear:hover { background-color: #d16b1d; }
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f4f6f9;
             border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-calc { 
+            background-color: #123e6d; 
+            color: white;
+            box-shadow: 0 4px 12px rgba(18, 62, 109, 0.2);
+        }
+        .btn-clear { 
+            background-color: #ef4444; 
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* Result Box */
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 12px;
             text-align: center;
             display: none;
-            border: 1px solid #ddd;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
         }
-        .highlight-result {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .mixed-result {
-            font-size: 20px;
-            font-weight: bold;
-            color: #f07e26;
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px dashed #ccc;
-        }
+        .highlight-result { font-size: 22px; font-weight: 700; margin-top: 10px; color: #123e6d; }
+        .mixed-result { font-size: 18px; font-weight: 600; color: #f07e26; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
     </style>
 </head>
 <body>
 
-    <div class="calculator-card">
-        <h2>জমি পরিমাপ অ্যাপ</h2>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'tab1')">ক্ষেত্রফল হিসাব</button>
-            <button class="tab-btn" onclick="switchTab(event, 'tab2')">প্রস্থ/দৈর্ঘ্য হিসাব</button>
+    <div class="app-container">
+        
+        <!-- মেইন মেনু -->
+        <div id="screen_menu" class="screen active">
+            <h2>জমি পরিমাপ অ্যাপ</h2>
+            <button class="menu-btn" onclick="openScreen('screen_hisab')">জমির হিসাব</button>
+            <button class="menu-btn" onclick="openScreen('screen_nol')">নল এর হিসাব</button>
+            <button class="menu-btn" onclick="openScreen('screen_rev')">প্রস্থ দৈর্ঘ্য হিসাব</button>
         </div>
 
-        <div id="tab1" class="tab-content active">
-            <label for="nolType1">নলের ধরন নির্বাচন করুন:</label>
-            <select id="nolType1">
-                <option value="4">৪ হাতি নল (১ নল = ৬ ফুট)</option>
-                <option value="5">৫ হাতি নল (১ নল = ৭.৫ ফুট)</option>
-            </select>
+        <!-- স্ক্রিন ১: জমির হিসাব -->
+        <div id="screen_hisab" class="screen">
+            <div class="top-bar">
+                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <h3 class="screen-title">জমির হিসাব</h3>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchHisabTab(event, 'hisab_area')">ক্ষেত্রফল নির্ণয়</button>
+                <button class="tab-btn" onclick="switchHisabTab(event, 'hisab_rev')">প্রস্থ/দৈর্ঘ্য</button>
+            </div>
+
+            <!-- হিসাব -> ক্ষেত্রফল -->
+            <div id="hisab_area" class="tab-content active">
+                <label>জমির দৈর্ঘ্য (লম্বা):</label>
+                <div class="grid-2">
+                    <div class="input-col"><span class="input-label">১ম পাশ (ফুট)</span><input type="number" id="h_l1_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l1_in" placeholder="০"></div>
+                </div>
+                <div class="grid-2">
+                    <div class="input-col"><span class="input-label">২য় পাশ (ফুট)</span><input type="number" id="h_l2_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l2_in" placeholder="০"></div>
+                </div>
+
+                <label>জমির প্রস্থ (চওড়া):</label>
+                <div class="grid-2">
+                    <div class="input-col"><span class="input-label">১ম পাশ (ফুট)</span><input type="number" id="h_w1_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w1_in" placeholder="০"></div>
+                </div>
+                <div class="grid-2">
+                    <div class="input-col"><span class="input-label">২য় পাশ (ফুট)</span><input type="number" id="h_w2_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w2_in" placeholder="০"></div>
+                </div>
+
+                <div class="grid-buttons">
+                    <button class="action-btn btn-clear" onclick="clearHisabArea()">ক্লিয়ার</button>
+                    <button class="action-btn btn-calc" onclick="calculateHisabArea()">হিসাব করুন</button>
+                </div>
+                <div class="result-box" id="res_hisab_area">
+                    <div id="sqFt_h" style="color: #475569; font-size: 16px;"></div>
+                    <div id="shotok_h" class="highlight-result"></div>
+                    <div id="mixed_h" class="mixed-result"></div>
+                </div>
+            </div>
+
+            <!-- হিসাব -> প্রস্থ/দৈর্ঘ্য -->
+            <div id="hisab_rev" class="tab-content">
+                <label>মোট জমির পরিমাণ:</label>
+                <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                    <div class="input-col"><input type="number" id="h_target_area" placeholder="যেমন: ৩.৩০"></div>
+                    <div class="input-col">
+                        <select id="h_area_unit">
+                            <option value="shotok" selected>শতক</option>
+                            <option value="katha">কাঠা</option>
+                            <option value="kura">কুড়া</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>জানা দিকের মাপ:</label>
+                <div class="grid-2">
+                    <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_known_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_known_in" placeholder="০"></div>
+                </div>
+
+                <div class="grid-buttons">
+                    <button class="action-btn btn-clear" onclick="clearHisabRev()">ক্লিয়ার</button>
+                    <button class="action-btn btn-calc" onclick="calculateHisabRev()">হিসাব করুন</button>
+                </div>
+                <div class="result-box" id="res_hisab_rev">
+                    <div id="req_h_side" class="highlight-result" style="color: #f07e26;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- স্ক্রিন ২: নল এর হিসাব -->
+        <div id="screen_nol" class="screen">
+            <div class="top-bar">
+                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <h3 class="screen-title">নল এর হিসাব</h3>
+            </div>
+
+            <label>১ নলের মাপ নির্ধারণ করুন:</label>
+            <div class="grid-3">
+                <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_size_hat" value="4"></div>
+                <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_size_bighat" value="0"></div>
+                <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_size_angul" value="0"></div>
+            </div>
 
             <label>জমির দৈর্ঘ্য:</label>
-            <div class="input-group">
-                <div><span class="input-label">নল</span><input type="number" id="l_nol" placeholder="০"></div>
-                <div><span class="input-label">হাত</span><input type="number" id="l_hat" placeholder="০"></div>
-                <div><span class="input-label">বিঘাত</span><input type="number" id="l_bighat" placeholder="০"></div>
-                <div><span class="input-label">আঙুল</span><input type="number" id="l_angul" placeholder="০"></div>
+            <div class="grid-4">
+                <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_l_nol" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_l_hat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_l_bighat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_l_angul" placeholder="০"></div>
             </div>
 
             <label>জমির প্রস্থ:</label>
-            <div class="input-group">
-                <div><span class="input-label">নল</span><input type="number" id="w_nol" placeholder="০"></div>
-                <div><span class="input-label">হাত</span><input type="number" id="w_hat" placeholder="০"></div>
-                <div><span class="input-label">বিঘাত</span><input type="number" id="w_bighat" placeholder="০"></div>
-                <div><span class="input-label">আঙুল</span><input type="number" id="w_angul" placeholder="০"></div>
+            <div class="grid-4">
+                <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_w_nol" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_w_hat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_w_bighat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_w_angul" placeholder="০"></div>
             </div>
 
-            <div class="button-group">
-                <button class="action-btn btn-calc" onclick="calculateArea()">হিসাব করুন</button>
-                <button class="action-btn btn-clear" onclick="clearFields1()">ক্লিয়ার</button>
+            <div class="grid-buttons">
+                <button class="action-btn btn-clear" onclick="clearNolArea()">ক্লিয়ার</button>
+                <button class="action-btn btn-calc" onclick="calculateNolArea()">হিসাব করুন</button>
             </div>
 
-            <div class="result-box" id="resultBox1">
-                <div id="sqFeetResult" style="color: #333; font-size: 16px;"></div>
-                <div id="shotokResult" class="highlight-result" style="color: #123e6d;"></div>
-                <div id="localMixedResult" class="mixed-result"></div>
+            <div class="result-box" id="res_nol_area">
+                <div id="sqFt_n" style="color: #475569; font-size: 16px;"></div>
+                <div id="shotok_n" class="highlight-result"></div>
+                <div id="mixed_n" class="mixed-result"></div>
             </div>
         </div>
 
-        <div id="tab2" class="tab-content">
-            <label for="nolType2">নলের ধরন নির্বাচন করুন:</label>
-            <select id="nolType2">
-                <option value="4">৪ হাতি নল</option>
-                <option value="5">৫ হাতি নল</option>
-            </select>
+        <!-- স্ক্রিন ৩: প্রস্থ দৈর্ঘ্য হিসাব -->
+        <div id="screen_rev" class="screen">
+            <div class="top-bar">
+                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <h3 class="screen-title">প্রস্থ দৈর্ঘ্য হিসাব (নল)</h3>
+            </div>
+
+            <label>১ নলের মাপ নির্ধারণ করুন:</label>
+            <div class="grid-3">
+                <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_size_hat" value="4"></div>
+                <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_size_bighat" value="0"></div>
+                <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_size_angul" value="0"></div>
+            </div>
 
             <label>মোট জমির পরিমাণ:</label>
-            <div class="input-group" style="gap: 10px;">
-                <div style="flex: 2;"><input type="number" id="targetArea" placeholder="যেমন: ৩.৩০"></div>
-                <div style="flex: 1;">
-                    <select id="areaUnit">
+            <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                <div class="input-col"><input type="number" id="r_target_area" placeholder="যেমন: ৩.৩০"></div>
+                <div class="input-col">
+                    <select id="r_area_unit">
                         <option value="shotok" selected>শতক</option>
                         <option value="katha">কাঠা</option>
                         <option value="kura">কুড়া</option>
@@ -205,71 +353,56 @@
                 </div>
             </div>
 
-            <label>জানা দিকের মাপ (দৈর্ঘ্য বা প্রস্থ):</label>
-            <div class="input-group">
-                <div><span class="input-label">নল</span><input type="number" id="k_nol" placeholder="০"></div>
-                <div><span class="input-label">হাত</span><input type="number" id="k_hat" placeholder="০"></div>
-                <div><span class="input-label">বিঘাত</span><input type="number" id="k_bighat" placeholder="০"></div>
-                <div><span class="input-label">আঙুল</span><input type="number" id="k_angul" placeholder="০"></div>
+            <label>জানা দিকের মাপ:</label>
+            <div class="grid-4">
+                <div class="input-col"><span class="input-label">নল</span><input type="number" id="r_k_nol" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_k_hat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_k_bighat" placeholder="০"></div>
+                <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_k_angul" placeholder="০"></div>
             </div>
 
-            <div class="button-group">
-                <button class="action-btn btn-calc" onclick="calculateWidth()">হিসাব করুন</button>
-                <button class="action-btn btn-clear" onclick="clearFields2()">ক্লিয়ার</button>
+            <div class="grid-buttons">
+                <button class="action-btn btn-clear" onclick="clearNolRev()">ক্লিয়ার</button>
+                <button class="action-btn btn-calc" onclick="calculateNolRev()">হিসাব করুন</button>
             </div>
 
-            <div class="result-box" id="resultBox2">
-                <div id="requiredMeasurement" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
+            <div class="result-box" id="res_nol_rev">
+                <div id="req_n_side" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
             </div>
         </div>
+
     </div>
 
     <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js').catch(err => console.log(err));
+            });
+        }
+
         function toBengaliNum(engNum) {
             const bnNumbers = {'0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯', '.': '.'};
             return String(engNum).split('').map(char => bnNumbers[char] || char).join('');
         }
 
-        function switchTab(evt, tabId) {
-            let tabContents = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < tabContents.length; i++) tabContents[i].classList.remove("active");
-            let tabBtns = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < tabBtns.length; i++) tabBtns[i].classList.remove("active");
-            document.getElementById(tabId).classList.add("active");
-            evt.currentTarget.classList.add("active");
+        function openScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
 
+        function switchHisabTab(evt, tabId) {
+            document.querySelectorAll('#screen_hisab .tab-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('#screen_hisab .tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        const SQ_FEET_PER_SHOTOK = 435.6;
         const FT_PER_HAT = 1.5;
         const FT_PER_BIGHAT = 0.75;
         const FT_PER_ANGUL = 1 / 12;
-        const SQ_FEET_PER_SHOTOK = 435.6;
 
-        function getFeet(nol, hat, bighat, angul, nolType) {
-            let nolFeet = nolType * FT_PER_HAT;
-            return (nol * nolFeet) + (hat * FT_PER_HAT) + (bighat * FT_PER_BIGHAT) + (angul * FT_PER_ANGUL);
-        }
-
-        function calculateArea() {
-            let nolType = parseFloat(document.getElementById('nolType1').value);
-            
-            let l_nol = parseFloat(document.getElementById('l_nol').value) || 0;
-            let l_hat = parseFloat(document.getElementById('l_hat').value) || 0;
-            let l_bighat = parseFloat(document.getElementById('l_bighat').value) || 0;
-            let l_angul = parseFloat(document.getElementById('l_angul').value) || 0;
-
-            let w_nol = parseFloat(document.getElementById('w_nol').value) || 0;
-            let w_hat = parseFloat(document.getElementById('w_hat').value) || 0;
-            let w_bighat = parseFloat(document.getElementById('w_bighat').value) || 0;
-            let w_angul = parseFloat(document.getElementById('w_angul').value) || 0;
-
-            if (l_nol===0 && l_hat===0 && l_bighat===0 && l_angul===0 && w_nol===0 && w_hat===0 && w_bighat===0 && w_angul===0) {
-                alert("দয়া করে মাপ প্রদান করুন।"); return;
-            }
-
-            let lengthFeet = getFeet(l_nol, l_hat, l_bighat, l_angul, nolType);
-            let widthFeet = getFeet(w_nol, w_hat, w_bighat, w_angul, nolType);
-
-            let totalSqFeet = lengthFeet * widthFeet;
+        function showAreaResult(boxId, sqFtId, shotokId, mixedId, totalSqFeet) {
             let totalShotok = totalSqFeet / SQ_FEET_PER_SHOTOK;
             let totalKatha = totalShotok / 3.30;
             
@@ -282,75 +415,140 @@
             if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount) + " কাঠা ";
             mixedText += toBengaliNum(dhurCount.toFixed(2)) + " ধুর";
 
-            document.getElementById('resultBox1').style.display = 'block';
-            document.getElementById('sqFeetResult').innerHTML = "মোট ক্ষেত্রফল: " + toBengaliNum(totalSqFeet.toFixed(2)) + " বর্গফুট";
-            document.getElementById('shotokResult').innerHTML = toBengaliNum(totalShotok.toFixed(3)) + " শতক";
-            document.getElementById('localMixedResult').innerHTML = mixedText;
+            document.getElementById(boxId).style.display = 'block';
+            document.getElementById(sqFtId).innerHTML = "মোট ক্ষেত্রফল: " + toBengaliNum(totalSqFeet.toFixed(2)) + " বর্গফুট";
+            document.getElementById(shotokId).innerHTML = toBengaliNum(totalShotok.toFixed(3)) + " শতক";
+            document.getElementById(mixedId).innerHTML = mixedText;
         }
 
-        function calculateWidth() {
-            let nolType = parseFloat(document.getElementById('nolType2').value);
-            let targetArea = parseFloat(document.getElementById('targetArea').value) || 0;
-            let areaUnit = document.getElementById('areaUnit').value;
+        function calculateHisabArea() {
+            let l1 = (parseFloat(document.getElementById('h_l1_ft').value)||0) + ((parseFloat(document.getElementById('h_l1_in').value)||0)/12);
+            let l2 = (parseFloat(document.getElementById('h_l2_ft').value)||0) + ((parseFloat(document.getElementById('h_l2_in').value)||0)/12);
+            let w1 = (parseFloat(document.getElementById('h_w1_ft').value)||0) + ((parseFloat(document.getElementById('h_w1_in').value)||0)/12);
+            let w2 = (parseFloat(document.getElementById('h_w2_ft').value)||0) + ((parseFloat(document.getElementById('h_w2_in').value)||0)/12);
+
+            let avgL = l1; if(l2>0 && l1>0) avgL=(l1+l2)/2; else if(l2>0 && l1===0) avgL=l2;
+            let avgW = w1; if(w2>0 && w1>0) avgW=(w1+w2)/2; else if(w2>0 && w1===0) avgW=w2;
+
+            if (avgL === 0 || avgW === 0) { alert("দয়া করে দৈর্ঘ্য এবং প্রস্থের মান দিন।"); return; }
             
-            let k_nol = parseFloat(document.getElementById('k_nol').value) || 0;
-            let k_hat = parseFloat(document.getElementById('k_hat').value) || 0;
-            let k_bighat = parseFloat(document.getElementById('k_bighat').value) || 0;
-            let k_angul = parseFloat(document.getElementById('k_angul').value) || 0;
+            showAreaResult('res_hisab_area', 'sqFt_h', 'shotok_h', 'mixed_h', (avgL * avgW));
+        }
 
-            if (targetArea === 0 || (k_nol===0 && k_hat===0 && k_bighat===0 && k_angul===0)) {
-                alert("দয়া করে জমির পরিমাণ এবং জানা দিকের মাপ দিন।"); return;
-            }
+        function clearHisabArea() {
+            document.querySelectorAll('#hisab_area input').forEach(inp => inp.value = '');
+            document.getElementById('res_hisab_area').style.display = 'none';
+        }
 
-            let targetSqFeet = 0;
-            if (areaUnit === 'kura') targetSqFeet = targetArea * 20 * 3.30 * SQ_FEET_PER_SHOTOK;
-            else if (areaUnit === 'katha') targetSqFeet = targetArea * 3.30 * SQ_FEET_PER_SHOTOK;
-            else if (areaUnit === 'shotok') targetSqFeet = targetArea * SQ_FEET_PER_SHOTOK;
+        function calculateHisabRev() {
+            let area = parseFloat(document.getElementById('h_target_area').value) || 0;
+            let unit = document.getElementById('h_area_unit').value;
+            let k_ft = parseFloat(document.getElementById('h_known_ft').value) || 0;
+            let k_in = parseFloat(document.getElementById('h_known_in').value) || 0;
 
-            let knownFeet = getFeet(k_nol, k_hat, k_bighat, k_angul, nolType);
-            let requiredFeet = targetSqFeet / knownFeet;
+            if (area === 0 || (k_ft === 0 && k_in === 0)) { alert("দয়া করে মান দিন।"); return; }
+
+            let targetSqFt = area * SQ_FEET_PER_SHOTOK;
+            if (unit === 'katha') targetSqFt *= 3.30;
+            else if (unit === 'kura') targetSqFt *= (3.30 * 20);
+
+            let knownFt = k_ft + (k_in / 12);
+            let requiredFt = targetSqFt / knownFt;
+            let ans_ft = Math.floor(requiredFt);
+            let ans_in = (requiredFt - ans_ft) * 12;
+
+            document.getElementById('res_hisab_rev').style.display = 'block';
+            document.getElementById('req_h_side').innerHTML = "অজানা দিকের মাপ লাগবে:<br>" + toBengaliNum(ans_ft) + " ফুট " + toBengaliNum(ans_in.toFixed(2)) + " ইঞ্চি";
+        }
+
+        function clearHisabRev() {
+            document.querySelectorAll('#hisab_rev input').forEach(inp => inp.value = '');
+            document.getElementById('res_hisab_rev').style.display = 'none';
+        }
+
+        function getNolFeet(n, h, b, a, nolSizeInFeet) {
+            return (n * nolSizeInFeet) + (h * FT_PER_HAT) + (b * FT_PER_BIGHAT) + (a * FT_PER_ANGUL);
+        }
+
+        function calculateNolArea() {
+            let c_hat = parseFloat(document.getElementById('n_size_hat').value) || 0;
+            let c_bighat = parseFloat(document.getElementById('n_size_bighat').value) || 0;
+            let c_angul = parseFloat(document.getElementById('n_size_angul').value) || 0;
+            let nolSizeInFeet = (c_hat * FT_PER_HAT) + (c_bighat * FT_PER_BIGHAT) + (c_angul * FT_PER_ANGUL);
+            
+            if (nolSizeInFeet === 0) nolSizeInFeet = 4 * FT_PER_HAT;
+
+            let ln = parseFloat(document.getElementById('n_l_nol').value)||0;
+            let lh = parseFloat(document.getElementById('n_l_hat').value)||0;
+            let lb = parseFloat(document.getElementById('n_l_bighat').value)||0;
+            let la = parseFloat(document.getElementById('n_l_angul').value)||0;
+            let wn = parseFloat(document.getElementById('n_w_nol').value)||0;
+            let wh = parseFloat(document.getElementById('n_w_hat').value)||0;
+            let wb = parseFloat(document.getElementById('n_w_bighat').value)||0;
+            let wa = parseFloat(document.getElementById('n_w_angul').value)||0;
+
+            if (ln===0 && lh===0 && lb===0 && la===0 && wn===0 && wh===0 && wb===0 && wa===0) { alert("দয়া করে মাপ দিন।"); return; }
+
+            let lengthFeet = getNolFeet(ln, lh, lb, la, nolSizeInFeet);
+            let widthFeet = getNolFeet(wn, wh, wb, wa, nolSizeInFeet);
+            
+            showAreaResult('res_nol_area', 'sqFt_n', 'shotok_n', 'mixed_n', (lengthFeet * widthFeet));
+        }
+
+        function clearNolArea() {
+            document.querySelectorAll('#screen_nol input:not(#n_size_hat):not(#n_size_bighat):not(#n_size_angul)').forEach(inp => inp.value = '');
+            document.getElementById('n_size_hat').value = '4';
+            document.getElementById('n_size_bighat').value = '0';
+            document.getElementById('n_size_angul').value = '0';
+            document.getElementById('res_nol_area').style.display = 'none';
+        }
+
+        function calculateNolRev() {
+            let c_hat = parseFloat(document.getElementById('r_size_hat').value) || 0;
+            let c_bighat = parseFloat(document.getElementById('r_size_bighat').value) || 0;
+            let c_angul = parseFloat(document.getElementById('r_size_angul').value) || 0;
+            let nolSizeInFeet = (c_hat * FT_PER_HAT) + (c_bighat * FT_PER_BIGHAT) + (c_angul * FT_PER_ANGUL);
+
+            if (nolSizeInFeet === 0) nolSizeInFeet = 4 * FT_PER_HAT;
+
+            let area = parseFloat(document.getElementById('r_target_area').value) || 0;
+            let unit = document.getElementById('r_area_unit').value;
+            let kn = parseFloat(document.getElementById('r_k_nol').value)||0;
+            let kh = parseFloat(document.getElementById('r_k_hat').value)||0;
+            let kb = parseFloat(document.getElementById('r_k_bighat').value)||0;
+            let ka = parseFloat(document.getElementById('r_k_angul').value)||0;
+
+            if (area === 0 || (kn===0 && kh===0 && kb===0 && ka===0)) { alert("দয়া করে মান দিন।"); return; }
+
+            let targetSqFt = area * SQ_FEET_PER_SHOTOK;
+            if (unit === 'katha') targetSqFt *= 3.30;
+            else if (unit === 'kura') targetSqFt *= (3.30 * 20);
+
+            let knownFeet = getNolFeet(kn, kh, kb, ka, nolSizeInFeet);
+            let requiredFeet = targetSqFt / knownFeet;
 
             let totalInches = requiredFeet * 12;
-            let nolInches = nolType * 18;
+            let nolInches = nolSizeInFeet * 12;
             
-            let reqNol = Math.floor(totalInches / nolInches);
-            let remainingInches = totalInches % nolInches;
-            
-            let reqHat = Math.floor(remainingInches / 18);
-            remainingInches = remainingInches % 18;
-            
-            let reqBighat = Math.floor(remainingInches / 9);
-            let reqAngul = remainingInches % 9;
+            let reqN = Math.floor(totalInches / nolInches);
+            let remIn = totalInches % nolInches;
+            let reqH = Math.floor(remIn / 18);
+            remIn = remIn % 18;
+            let reqB = Math.floor(remIn / 9);
+            let reqA = remIn % 9;
 
-            document.getElementById('resultBox2').style.display = 'block';
-            document.getElementById('requiredMeasurement').innerHTML = 
-                "অন্য দিকের মাপ লাগবে:<br>" + 
-                toBengaliNum(reqNol) + " নল, " + 
-                toBengaliNum(reqHat) + " হাত, " + 
-                toBengaliNum(reqBighat) + " বিঘাত, " + 
-                toBengaliNum(reqAngul.toFixed(2)) + " আঙুল";
+            document.getElementById('res_nol_rev').style.display = 'block';
+            document.getElementById('req_n_side').innerHTML = "অন্য দিকের মাপ লাগবে:<br>" + 
+                toBengaliNum(reqN) + " নল, " + toBengaliNum(reqH) + " হাত, " + 
+                toBengaliNum(reqB) + " বিঘাত, " + toBengaliNum(reqA.toFixed(2)) + " আঙুল";
         }
 
-        function clearFields1() {
-            document.querySelectorAll('#tab1 input').forEach(input => input.value = '');
-            document.getElementById('resultBox1').style.display = 'none';
-        }
-
-        function clearFields2() {
-            document.querySelectorAll('#tab2 input').forEach(input => input.value = '');
-            document.getElementById('resultBox2').style.display = 'none';
-        }
-
-        // PWA এর জন্য সার্ভিস ওয়ার্কার চালু করা
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    }, err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
-            });
+        function clearNolRev() {
+            document.querySelectorAll('#screen_rev input:not(#r_size_hat):not(#r_size_bighat):not(#r_size_angul)').forEach(inp => inp.value = '');
+            document.getElementById('r_size_hat').value = '4';
+            document.getElementById('r_size_bighat').value = '0';
+            document.getElementById('r_size_angul').value = '0';
+            document.getElementById('res_nol_rev').style.display = 'none';
         }
     </script>
 

@@ -11,7 +11,7 @@
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- Updated Google Fonts: Noto Sans Bengali for perfect numbers and text -->
+    <!-- Updated Google Fonts: Noto Sans Bengali -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -131,12 +131,12 @@
         .input-col { display: flex; flex-direction: column; }
         
         .input-label {
-            font-size: 13px;
+            font-size: 12.5px;
             color: #475569;
             margin-bottom: 5px;
             font-weight: 600;
             text-align: left;
-            padding-left: 4px;
+            padding-left: 2px;
             width: 100%;
             display: block;
             white-space: nowrap;
@@ -222,25 +222,21 @@
                 <button class="tab-btn" onclick="switchHisabTab(event, 'hisab_rev')">প্রস্থ/দৈর্ঘ্য</button>
             </div>
 
-            <!-- হিসাব -> ক্ষেত্রফল -->
+            <!-- হিসাব -> ক্ষেত্রফল (এখানে এক লাইনে আনা হয়েছে) -->
             <div id="hisab_area" class="tab-content active">
                 <label>জমির দৈর্ঘ্য (লম্বা):</label>
-                <div class="grid-2">
-                    <div class="input-col"><span class="input-label">১ম পাশ (ফুট)</span><input type="number" id="h_l1_ft" placeholder="০"></div>
+                <div class="grid-4">
+                    <div class="input-col"><span class="input-label">১ম পাশ(ফুট)</span><input type="number" id="h_l1_ft" placeholder="০"></div>
                     <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l1_in" placeholder="০"></div>
-                </div>
-                <div class="grid-2">
-                    <div class="input-col"><span class="input-label">২য় পাশ (ফুট)</span><input type="number" id="h_l2_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">২য় পাশ(ফুট)</span><input type="number" id="h_l2_ft" placeholder="০"></div>
                     <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l2_in" placeholder="০"></div>
                 </div>
 
                 <label>জমির প্রস্থ (চওড়া):</label>
-                <div class="grid-2">
-                    <div class="input-col"><span class="input-label">১ম পাশ (ফুট)</span><input type="number" id="h_w1_ft" placeholder="০"></div>
+                <div class="grid-4">
+                    <div class="input-col"><span class="input-label">১ম পাশ(ফুট)</span><input type="number" id="h_w1_ft" placeholder="০"></div>
                     <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w1_in" placeholder="০"></div>
-                </div>
-                <div class="grid-2">
-                    <div class="input-col"><span class="input-label">২য় পাশ (ফুট)</span><input type="number" id="h_w2_ft" placeholder="০"></div>
+                    <div class="input-col"><span class="input-label">২য় পাশ(ফুট)</span><input type="number" id="h_w2_ft" placeholder="০"></div>
                     <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w2_in" placeholder="০"></div>
                 </div>
 

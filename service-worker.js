@@ -1,4 +1,4 @@
-const CACHE_NAME = 'land-calculator-v2';
+const CACHE_NAME = 'land-calculator-v3';
 const urlsToCache = [
     './',
     './index.html',

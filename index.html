@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>জমি পরিমাপ অ্যাপ</title>
     
-    <!-- PWA ও আইকন লিংক -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#123e6d">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- Google Fonts: Noto Sans Bengali -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -20,10 +18,10 @@
             background: linear-gradient(135deg, #eef2f5 0%, #e4ebf5 100%);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 10px;
+            padding: 40px 10px 20px 10px;
             box-sizing: border-box;
             color: #334155;
         }
@@ -46,7 +44,6 @@
             font-weight: 700;
         }
         
-        /* Main Menu Styles */
         .menu-btn {
             display: flex;
             justify-content: center;
@@ -81,7 +78,6 @@
             transform: translateX(5px);
         }
 
-        /* Screen Management */
         .screen, .tab-content { display: none; }
         .screen.active, .tab-content.active { display: block; animation: fadeIn 0.3s ease forwards; }
         @keyframes fadeIn {
@@ -89,7 +85,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Top Bar */
         .top-bar {
             display: flex;
             align-items: center;
@@ -111,7 +106,6 @@
         }
         .screen-title { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; }
 
-        /* Modern Tabs */
         .tabs {
             display: flex;
             background-color: #f1f5f9;
@@ -138,7 +132,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
-        /* Grid Layouts & Measurement Boxes */
         label { display: block; margin: 15px 0 8px 0; font-weight: 600; color: #334155; font-size: 15px; }
         
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
@@ -190,14 +183,13 @@
             border-radius: 8px;
             box-sizing: border-box;
             font-size: 16px;
-            font-family: 'Noto Sans Bengali', sans-serif;
+            font-family: inherit;
             color: #0f172a;
             outline: none;
             text-align: center;
         }
         select:focus, input:focus { border-color: #f07e26; background-color: #ffffff; }
 
-        /* Section styles for Mati */
         .mati-section {
             background: #f8fafc;
             padding: 12px 15px;
@@ -216,7 +208,7 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            font-family: 'Noto Sans Bengali', sans-serif;
+            font-family: inherit;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -238,7 +230,6 @@
             cursor: pointer;
         }
 
-        /* Action Buttons */
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
         .grid-buttons-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         
@@ -247,7 +238,7 @@
             border: none;
             border-radius: 8px;
             font-size: 15px;
-            font-family: 'Noto Sans Bengali', sans-serif;
+            font-family: inherit;
             cursor: pointer;
             font-weight: 600;
         }
@@ -260,7 +251,6 @@
         .btn-share { background-color: #f59e0b; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
         .btn-print { background-color: #1e293b; color: white; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
         
-        /* Result Box */
         .result-box {
             margin-top: 25px;
             padding: 20px;
@@ -274,7 +264,6 @@
         .highlight-result { font-size: 22px; font-weight: 700; margin-top: 10px; color: #123e6d; display: inline-block; }
         .mixed-result { font-size: 18px; font-weight: 600; color: #f07e26; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
 
-        /* Report Table Styling */
         .report-table {
             width: 100%;
             border-collapse: collapse;
@@ -290,11 +279,13 @@
         .report-table th { background-color: #e2e8f0; color: #1e293b; font-weight: 700; }
         .report-table tfoot td { font-weight: 700; color: #1e5a9c; }
 
-        /* Print Styles (Enhanced for PDF/Invoice look) */
+        /* Print Styles */
         @media print {
-            body { background: white; padding: 0; }
-            .app-container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; }
+            body { background: white; padding: 0; align-items: flex-start; }
+            .app-container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; margin: 0; }
             .no-print { display: none !important; }
+            .screen { display: none !important; }
+            #screen_report { display: block !important; }
             
             #print_area {
                 border: 2px solid #1e293b;
@@ -554,7 +545,7 @@
         </div>
 
         <!-- ==========================================
-             স্ক্রিন ৩: মাটির হিসাব (বর্গফুট)
+             স্ক্রিন ৩: মাটির হিসাব
              ========================================== -->
         <div id="screen_mati" class="screen">
             <div class="top-bar no-print">
@@ -683,9 +674,10 @@
 
                 <!-- Report Table for Round Wood -->
                 <div id="round_report_area" style="display:none; margin-top:20px;">
+                    <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
                     <div class="print-header" style="display:none;">
                         <h2>জমি ও কাঠ পরিমাপ অ্যাপ</h2>
-                        <p>গোল কাঠের হিসাব রিপোর্ট</p>
+                        <p id="round_print_title">গোল কাঠের হিসাব রিপোর্ট</p>
                     </div>
                     <div style="overflow-x:auto;">
                         <table class="report-table">
@@ -741,9 +733,10 @@
 
                 <!-- Report Table for Flat Wood -->
                 <div id="flat_report_area" style="display:none; margin-top:20px;">
+                    <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
                     <div class="print-header" style="display:none;">
                         <h2>জমি ও কাঠ পরিমাপ অ্যাপ</h2>
-                        <p>চ্যাপ্টা/সাইজ কাঠের হিসাব রিপোর্ট</p>
+                        <p id="flat_print_title">চ্যাপ্টা কাঠের হিসাব রিপোর্ট</p>
                     </div>
                     <div style="overflow-x:auto;">
                         <table class="report-table">
@@ -774,38 +767,44 @@
         </div>
     </div>
 
-    <!-- Print specific CSS to show header only on print -->
-    <style>
-        @media print {
-            .print-header { display: block !important; }
-        }
-    </style>
-
     <script>
-        // Force update cache
-        if ('caches' in window) {
-            caches.keys().then((names) => {
-                names.forEach(name => {
-                    caches.delete(name);
-                });
-            });
-        }
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js').then(reg => {
-                    reg.update();
-                }).catch(err => console.log(err));
-            });
+        // Back Button & History Management
+        window.addEventListener('DOMContentLoaded', () => {
+            history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname);
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./service-worker.js').catch(err => console.log(err));
+            }
+        });
+
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.screen) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(event.state.screen).classList.add('active');
+            } else {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen_menu').classList.add('active');
+            }
+        });
+
+        function openScreen(screenId, addToHistory = true) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            window.scrollTo(0, 0); 
+            
+            if (addToHistory) {
+                if (screenId === 'screen_menu') {
+                    history.pushState({ screen: 'screen_menu' }, '', window.location.pathname);
+                } else {
+                    history.pushState({ screen: screenId }, '', '#' + screenId);
+                }
+            }
         }
 
         function toBengaliNum(engNum) {
             const bnNumbers = {'0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯', '.': '.'};
             return String(engNum).split('').map(char => bnNumbers[char] || char).join('');
-        }
-
-        function openScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
         }
 
         function switchTabGroup(evt, screenId, tabId) {
@@ -954,7 +953,7 @@
             document.getElementById('res_nol_rev').style.display = 'none';
         }
 
-        /* ---------------- মাটির হিসাব ---------------- */
+        /* ---------------- মাটির হিসাব কোড ---------------- */
         function addMatiField(containerId) {
             const container = document.getElementById(containerId);
             const count = container.querySelectorAll('.mati-row').length + 1;
@@ -1013,7 +1012,7 @@
             document.getElementById('res_mati_area').style.display = 'none';
         }
 
-        /* ---------------- গাছ ও কাঠের হিসাব (নতুন লজিক) ---------------- */
+        /* ---------------- গাছ ও কাঠের হিসাব ---------------- */
         let roundWoodList = [];
         let flatWoodList = [];
 
@@ -1078,18 +1077,18 @@
                 totalCft += item.cft;
                 totalPrice += item.price;
                 tbody += `<tr>
-                    <td>${toBengaliNum(idx + 1)}</td>
+                    <td>${toBengaliNum((idx + 1).toString())}</td>
                     <td>${toBengaliNum(item.len)}</td>
                     <td>${toBengaliNum(item.girth)}</td>
-                    <td>${toBengaliNum(item.qty)}</td>
+                    <td>${toBengaliNum(item.qty.toString())}</td>
                     <td>${toBengaliNum(item.cft.toFixed(2))}</td>
-                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price)) : '-'}</td>
+                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-'}</td>
                 </tr>`;
             });
 
             document.getElementById('round_tbody').innerHTML = tbody;
             document.getElementById('round_total_cft').innerText = toBengaliNum(totalCft.toFixed(2));
-            document.getElementById('round_total_price').innerText = toBengaliNum(Math.round(totalPrice));
+            document.getElementById('round_total_price').innerText = toBengaliNum(Math.round(totalPrice).toString());
         }
 
         function clearRoundList() {
@@ -1120,7 +1119,7 @@
             if (l_ft > 0) dimText += l_ft + "'";
             if (l_in > 0) dimText += " " + l_in + "''";
             if (dimText === "") dimText = "০";
-            dimText += " x " + toBengaliNum(w_in) + "'' x " + toBengaliNum(h_in) + "''";
+            dimText += " x " + toBengaliNum(w_in.toString()) + "'' x " + toBengaliNum(h_in.toString()) + "''";
 
             flatWoodList.push({
                 len: formatDim(l_ft, l_in),
@@ -1157,18 +1156,18 @@
                 totalCft += item.cft;
                 totalPrice += item.price;
                 tbody += `<tr>
-                    <td>${toBengaliNum(idx + 1)}</td>
+                    <td>${toBengaliNum((idx + 1).toString())}</td>
                     <td>${toBengaliNum(item.len)}</td>
                     <td>${item.dim}</td>
-                    <td>${toBengaliNum(item.qty)}</td>
+                    <td>${toBengaliNum(item.qty.toString())}</td>
                     <td>${toBengaliNum(item.cft.toFixed(2))}</td>
-                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price)) : '-'}</td>
+                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-'}</td>
                 </tr>`;
             });
 
             document.getElementById('flat_tbody').innerHTML = tbody;
             document.getElementById('flat_total_cft').innerText = toBengaliNum(totalCft.toFixed(2));
-            document.getElementById('flat_total_price').innerText = toBengaliNum(Math.round(totalPrice));
+            document.getElementById('flat_total_price').innerText = toBengaliNum(Math.round(totalPrice).toString());
         }
 
         function clearFlatList() {
@@ -1180,7 +1179,7 @@
 
         // ================= SHARE & COPY LOGIC =================
         function generateShareText(type) {
-            let text = type === 'round' ? "গোল কাঠের হিসাব রিপোর্ট:\n--------------------\n" : "চ্যাপ্টা কাঠের হিসাব রিপোর্ট:\n--------------------\n";
+            let text = type === 'round' ? `গোল কাঠের হিসাব রিপোর্ট:\n--------------------\n` : `চ্যাপ্টা কাঠের হিসাব রিপোর্ট:\n--------------------\n`;
             let list = type === 'round' ? roundWoodList : flatWoodList;
             
             let tCft = 0; let tPrice = 0; let tQty = 0;
@@ -1188,14 +1187,14 @@
             list.forEach((item, index) => {
                 tCft += item.cft; tPrice += item.price; tQty += item.qty;
                 if(type === 'round') {
-                    text += `${toBengaliNum(index+1)}. বেড়: ${toBengaliNum(item.girth)}, দৈর্ঘ্য: ${toBengaliNum(item.len)}, সংখ্যা: ${toBengaliNum(item.qty)}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price)) : '০'} টাকা\n`;
+                    text += `${toBengaliNum((index+1).toString())}. বেড়: ${toBengaliNum(item.girth)}, দৈর্ঘ্য: ${toBengaliNum(item.len)}, সংখ্যা: ${toBengaliNum(item.qty.toString())}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price).toString()) : '০'} টাকা\n`;
                 } else {
-                    text += `${toBengaliNum(index+1)}. মাপ: ${item.dim}, সংখ্যা: ${toBengaliNum(item.qty)}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price)) : '০'} টাকা\n`;
+                    text += `${toBengaliNum((index+1).toString())}. মাপ: ${item.dim}, সংখ্যা: ${toBengaliNum(item.qty.toString())}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price).toString()) : '০'} টাকা\n`;
                 }
             });
 
-            text += `--------------------\nমোট সংখ্যা: ${toBengaliNum(tQty)} টি\nমোট সিএফটি: ${toBengaliNum(tCft.toFixed(2))}\n`;
-            if (tPrice > 0) text += `মোট দাম: ${toBengaliNum(Math.round(tPrice))} টাকা`;
+            text += `--------------------\nমোট সংখ্যা: ${toBengaliNum(tQty.toString())} টি\nমোট সিএফটি: ${toBengaliNum(tCft.toFixed(2))}\n`;
+            if (tPrice > 0) text += `মোট দাম: ${toBengaliNum(Math.round(tPrice).toString())} টাকা`;
             return text;
         }
 
@@ -1234,7 +1233,7 @@
                     text: rawShareText
                 }).catch(console.error);
             } else {
-                alert("আপনার ব্রাউজার সরাসরি শেয়ার সাপোর্ট করে না।\nঅনুগ্রহ করে 'কপি' বাটনে ক্লিক করে টেক্সটটি শেয়ার করুন।");
+                alert(`আপনার ব্রাউজার সরাসরি শেয়ার সাপোর্ট করে না।\nঅনুগ্রহ করে 'কপি' বাটনে ক্লিক করে টেক্সটটি শেয়ার করুন।`);
             }
         }
     </script>

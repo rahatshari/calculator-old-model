@@ -2,309 +2,215 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>জমি পরিমাপ অ্যাপ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>জমি ও কাঠ পরিমাপ</title>
     
+    <!-- PWA ও আইকন লিংক -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#123e6d">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
 
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        body {
+        /* ওভারস্ক্রল বন্ধ করে এজ-টু-এজ ফুল স্ক্রিন ডিজাইন */
+        html, body {
             font-family: 'Noto Sans Bengali', sans-serif;
-            background: linear-gradient(135deg, #eef2f5 0%, #e4ebf5 100%);
+            background: #eef2f5; 
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
             margin: 0;
-            padding: 40px 10px 20px 10px;
+            padding: 0; /* অতিরিক্ত ফাঁকা জায়গা বাদ দেওয়া হলো */
             box-sizing: border-box;
             color: #334155;
+            overscroll-behavior-y: none; 
         }
+        
         .app-container {
             background-color: #ffffff;
-            padding: 25px 20px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
-            max-width: 450px;
             width: 100%;
+            max-width: 500px;
+            min-height: 100vh; 
             position: relative;
-        }
-        
-        h2 {
-            text-align: center;
-            color: #1e293b;
-            margin-bottom: 25px;
-            margin-top: 5px;
-            font-size: 24px;
-            font-weight: 700;
-        }
-        
-        .menu-btn {
+            box-shadow: none;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+            flex-direction: column;
+            margin: 0 auto;
+        }
+
+        /* --- প্রফেশনাল অ্যাপ হেডার --- */
+        .app-header {
             background: linear-gradient(135deg, #123e6d 0%, #1e5a9c 100%);
             color: #ffffff;
-            border: none;
-            padding: 18px 20px;
-            margin-bottom: 16px;
-            font-size: 18px;
-            font-weight: 600;
-            font-family: 'Noto Sans Bengali', sans-serif;
-            border-radius: 12px;
+            padding: 30px 20px 35px 20px;
+            text-align: center;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
+            box-shadow: 0 4px 15px rgba(18, 62, 109, 0.2);
+            margin-bottom: 25px;
+        }
+        .app-header h2 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .app-header p {
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* --- ড্যাশবোর্ড গ্রিড (মেনু) --- */
+        #screen_menu.active {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 10px 25px 30px 25px;
+            align-content: start;
+            flex: 1;
+        }
+        .dash-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 40px 10px; /* কার্ড আরও বড় করা হলো */
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
             cursor: pointer;
-            box-shadow: 0 8px 20px rgba(18, 62, 109, 0.2);
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s ease;
         }
-        .menu-btn::after {
-            content: "➔";
-            font-size: 16px;
-            opacity: 0.8;
-            transition: transform 0.3s ease;
-            position: absolute;
-            right: 20px;
+        .dash-card:active {
+            background: #f8fafc;
+            transform: scale(0.97);
         }
-        .menu-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(18, 62, 109, 0.3);
+        .dash-icon {
+            font-size: 65px; /* আইকন সাইজ বড় করা হলো */
+            margin-bottom: 15px;
+            display: inline-block;
         }
-        .menu-btn:hover::after {
-            transform: translateX(5px);
-        }
-
-        .screen, .tab-content { display: none; }
-        .screen.active, .tab-content.active { display: block; animation: fadeIn 0.3s ease forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dash-title {
+            font-size: 18px; /* টেক্সট সাইজ বড় করা হলো */
+            font-weight: 700;
+            color: #1e293b;
         }
 
+        /* --- সাব-স্ক্রিন টপ বার --- */
         .top-bar {
+            background: #123e6d;
+            color: #ffffff;
+            padding: 20px 15px 15px 15px;
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .back-btn {
-            background-color: transparent;
-            color: #123e6d;
-            border: 1px solid #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Noto Sans Bengali', sans-serif;
-            cursor: pointer;
-            font-weight: 600;
-            margin-right: 12px;
-        }
-        .screen-title { font-size: 18px; font-weight: 700; color: #0f172a; margin: 0; }
-
-        .tabs {
-            display: flex;
-            background-color: #f1f5f9;
-            padding: 5px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 8px;
             background: transparent;
+            color: #ffffff;
             border: none;
-            font-size: 13.5px;
-            font-weight: 600;
-            font-family: 'Noto Sans Bengali', sans-serif;
-            color: #64748b;
+            font-size: 24px;
             cursor: pointer;
-            border-radius: 8px;
-            white-space: nowrap;
-        }
-        .tab-btn.active {
-            background-color: #ffffff;
-            color: #123e6d;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        label { display: block; margin: 15px 0 8px 0; font-weight: 600; color: #334155; font-size: 15px; }
-        
-        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
-        
-        .measurement-card {
-            background-color: #ffffff;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 12px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-            margin-bottom: 15px;
-            position: relative;
-        }
-        .measurement-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1e5a9c;
-            margin-bottom: 10px;
-            border-bottom: 1px dashed #e2e8f0;
-            padding-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .inner-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-        .input-col { display: flex; flex-direction: column; }
-        .input-label {
-            font-size: 12.5px;
-            color: #475569;
-            margin-bottom: 5px;
-            font-weight: 600;
-            text-align: left;
-            padding-left: 2px;
-            width: 100%;
-            display: block;
-            white-space: nowrap;
-        }
-        
-        @media (max-width: 380px) { .input-label { font-size: 11px; } }
-
-        select, input {
-            width: 100%;
-            padding: 10px 4px;
-            border: 1.5px solid #e2e8f0;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            font-family: inherit;
-            color: #0f172a;
-            outline: none;
-            text-align: center;
-        }
-        select:focus, input:focus { border-color: #f07e26; background-color: #ffffff; }
-
-        .mati-section {
-            background: #f8fafc;
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #e2e8f0;
-        }
-        .mati-section > label { margin-top: 0; margin-bottom: 12px; display: block; font-size: 16px; color: #123e6d; }
-        
-        .add-btn {
-            background: transparent;
-            color: #0369a1;
-            border: 2px dashed #7dd3fc;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
+            margin-right: 15px;
+            padding: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            width: 100%;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            transition: background 0.3s ease;
         }
-        .add-btn:hover { background: #e0f2fe; }
-        
-        .remove-btn {
-            background: #fef2f2;
-            color: #ef4444;
-            border: 1px solid #fca5a5;
-            border-radius: 6px;
-            padding: 2px 8px;
-            font-size: 12px;
-            cursor: pointer;
+        .screen-title { font-size: 19px; font-weight: 600; margin: 0; }
+
+        .content-area {
+            padding: 15px 20px 40px 20px; /* ভেতরের প্যাডিং অপটিমাইজ করা হলো */
+            flex: 1;
         }
 
-        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        /* Screen Management */
+        .screen, .tab-content { display: none; }
+        .screen.active, .tab-content.active { display: block; animation: fadeIn 0.3s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modern Tabs */
+        .tabs { display: flex; background-color: #f1f5f9; padding: 6px; border-radius: 12px; margin-bottom: 18px; }
+        .tab-btn { flex: 1; padding: 12px 5px; background: transparent; border: none; font-size: 14.5px; font-weight: 600; font-family: inherit; color: #64748b; cursor: pointer; border-radius: 8px; white-space: nowrap; transition: 0.3s; }
+        .tab-btn.active { background-color: #ffffff; color: #123e6d; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+        /* Labels adjusted to bring content up */
+        label { display: block; margin: 5px 0 8px 0; font-weight: 700; color: #1e293b; font-size: 15px; }
+        
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; }
+        
+        .measurement-card { background-color: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 15px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 15px; position: relative; }
+        .measurement-title { font-size: 14.5px; font-weight: 700; color: #1e5a9c; margin-bottom: 12px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .inner-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .input-col { display: flex; flex-direction: column; }
+        .input-label { font-size: 13px; color: #64748b; margin-bottom: 5px; font-weight: 600; text-align: left; padding-left: 2px; width: 100%; display: block; white-space: nowrap; }
+
+        select, input { width: 100%; padding: 12px 8px; border: 1.5px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; color: #0f172a; outline: none; text-align: center; transition: 0.2s; }
+        select:focus, input:focus { border-color: #123e6d; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(18, 62, 109, 0.1); }
+
+        .mati-section { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .mati-section > label { margin-top: 0; margin-bottom: 12px; display: block; font-size: 15px; color: #123e6d; }
+        
+        .add-btn { background: transparent; color: #123e6d; border: 2px dashed #94a3b8; padding: 12px; border-radius: 10px; font-size: 14.5px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 5px; margin-bottom: 15px; }
+        .add-btn:active { background: #e2e8f0; }
+        .remove-btn { background: #fee2e2; color: #ef4444; border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+        .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; margin-bottom: 20px;}
         .grid-buttons-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         
-        button.action-btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-family: inherit;
-            cursor: pointer;
-            font-weight: 600;
-        }
+        button.action-btn { padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-family: inherit; cursor: pointer; font-weight: 700; }
+        
         .btn-calc { background-color: #123e6d; color: white; box-shadow: 0 4px 12px rgba(18, 62, 109, 0.2); }
-        .btn-calc:hover { background-color: #0b2746; transform: translateY(-2px); }
         .btn-clear { background-color: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
-        .btn-clear:hover { background-color: #dc2626; }
         .btn-report { background-color: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); width:100%; margin-top:15px;}
         .btn-copy { background-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
         .btn-share { background-color: #f59e0b; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
         .btn-print { background-color: #1e293b; color: white; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
         
-        .result-box {
-            margin-top: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.04);
-        }
+        .result-box { margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; text-align: center; display: none; border: 1px solid #e2e8f0; }
         .highlight-result { font-size: 22px; font-weight: 700; margin-top: 10px; color: #123e6d; display: inline-block; }
-        .mixed-result { font-size: 18px; font-weight: 600; color: #f07e26; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+        .mixed-result { font-size: 16px; font-weight: 600; color: #f59e0b; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
 
-        .report-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 13px;
-            background: #fff;
-        }
-        .report-table th, .report-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px 4px;
-            text-align: center;
-        }
+        /* Report Table Styling */
+        .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; background: #fff; }
+        .report-table th, .report-table td { border: 1px solid #cbd5e1; padding: 10px 5px; text-align: center; }
         .report-table th { background-color: #e2e8f0; color: #1e293b; font-weight: 700; }
-        .report-table tfoot td { font-weight: 700; color: #1e5a9c; }
+        .report-table tfoot td { font-weight: 700; color: #1e5a9c; font-size: 14.5px; }
 
-        /* Print Styles */
+        /* --- Print Styles (Dedicated Container Approach) --- */
+        #print_container { display: none; background: white; padding: 20px; width: 100%; color: black; }
+        
         @media print {
-            body { background: white; padding: 0; align-items: flex-start; }
-            .app-container { box-shadow: none; border-radius: 0; max-width: 100%; padding: 0; margin: 0; }
-            .no-print { display: none !important; }
-            .screen { display: none !important; }
-            #screen_report { display: block !important; }
+            body { background: white !important; margin: 0 !important; padding: 0 !important; }
+            .app-container { display: none !important; } /* Hide entire app during print */
+            #print_container { display: block !important; } /* Show ONLY the print container */
             
-            #print_area {
-                border: 2px solid #1e293b;
-                border-radius: 8px;
-                padding: 20px;
-            }
-            .print-header { 
-                display: block !important; 
-                text-align: center;
-                border-bottom: 2px solid #1e293b;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }
-            .print-header h2 { margin: 0; font-size: 24px; color: #1e293b; }
-            .print-header p { margin: 5px 0 0 0; font-size: 16px; color: #475569; }
+            .print-header { display: block !important; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+            .print-header h2 { margin: 0; font-size: 24px; color: #000; font-weight: bold; }
+            .print-header p { margin: 5px 0 0 0; font-size: 16px; color: #333; }
             
-            .report-table th { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; }
-            .report-table tfoot td { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; }
-            h2 { margin-top: 0; }
+            .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            .report-table th, .report-table td { border: 1px solid #000 !important; padding: 8px 4px; color: #000; }
+            .report-table th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
+            .report-table tfoot td { background-color: #f9f9f9 !important; -webkit-print-color-adjust: exact; color: #000; }
         }
     </style>
 </head>
@@ -312,13 +218,33 @@
 
     <div class="app-container">
         
-        <!-- মেইন মেনু -->
+        <!-- ==========================================
+             মেইন মেনু (হোম স্ক্রিন)
+             ========================================== -->
         <div id="screen_menu" class="screen active no-print">
-            <h2>জমি পরিমাপ অ্যাপ</h2>
-            <button class="menu-btn" onclick="openScreen('screen_hisab')">জমির হিসাব</button>
-            <button class="menu-btn" onclick="openScreen('screen_nol')">নল এর হিসাব</button>
-            <button class="menu-btn" onclick="openScreen('screen_mati')">মাটির হিসাব</button>
-            <button class="menu-btn" onclick="openScreen('screen_wood')">গাছ ও কাঠের হিসাব</button>
+            <div class="app-header">
+                <h2>জমি ও কাঠ পরিমাপ</h2>
+                <p>নির্ভুল হিসাবের ডিজিটাল মাধ্যম</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dash-card" onclick="openScreen('screen_hisab')">
+                    <span class="dash-icon">📏</span>
+                    <span class="dash-title">জমির হিসাব</span>
+                </div>
+                <div class="dash-card" onclick="openScreen('screen_nol')">
+                    <span class="dash-icon">🦯</span>
+                    <span class="dash-title">নল এর হিসাব</span>
+                </div>
+                <div class="dash-card" onclick="openScreen('screen_mati')">
+                    <span class="dash-icon">🪨</span>
+                    <span class="dash-title">মাটির হিসাব</span>
+                </div>
+                <div class="dash-card" onclick="openScreen('screen_wood')">
+                    <span class="dash-icon">🌳</span>
+                    <span class="dash-title">কাঠের হিসাব</span>
+                </div>
+            </div>
         </div>
 
         <!-- ==========================================
@@ -326,131 +252,130 @@
              ========================================== -->
         <div id="screen_hisab" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <button class="back-btn" onclick="goBackToMenu()">❮</button>
                 <h3 class="screen-title">জমির হিসাব</h3>
             </div>
             
-            <div class="tabs no-print">
-                <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_area')">ক্ষেত্রফল (৪ কোণা)</button>
-                <button class="tab-btn" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_tri')">ত্রিভুজাকার</button>
-                <button class="tab-btn" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_rev')">প্রস্থ/দৈর্ঘ্য</button>
-            </div>
+            <div class="content-area">
+                <div class="tabs no-print">
+                    <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_area')">৪ কোণা</button>
+                    <button class="tab-btn" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_tri')">ত্রিভুজাকার</button>
+                    <button class="tab-btn" onclick="switchTabGroup(event, 'screen_hisab', 'hisab_rev')">প্রস্থ/দৈর্ঘ্য</button>
+                </div>
 
-            <!-- ৪ কোণা ক্ষেত্রফল -->
-            <div id="hisab_area" class="tab-content active no-print">
-                <label>জমির দৈর্ঘ্য (লম্বা):</label>
-                <div class="grid-2">
-                    <div class="measurement-card" style="margin-bottom:0;">
-                        <div class="measurement-title" style="justify-content:center;">১ম পাশ</div>
-                        <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_l1_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l1_in" placeholder="০"></div>
+                <div id="hisab_area" class="tab-content active no-print">
+                    <label>জমির দৈর্ঘ্য (লম্বা):</label>
+                    <div class="grid-2">
+                        <div class="measurement-card" style="margin-bottom:0;">
+                            <div class="measurement-title" style="justify-content:center;">১ম পাশ</div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_l1_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l1_in" placeholder="০"></div>
+                            </div>
+                        </div>
+                        <div class="measurement-card" style="margin-bottom:0;">
+                            <div class="measurement-title" style="justify-content:center;">২য় পাশ</div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_l2_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l2_in" placeholder="০"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="measurement-card" style="margin-bottom:0;">
-                        <div class="measurement-title" style="justify-content:center;">২য় পাশ</div>
-                        <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_l2_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_l2_in" placeholder="০"></div>
+
+                    <label>জমির প্রস্থ (চওড়া):</label>
+                    <div class="grid-2">
+                        <div class="measurement-card" style="margin-bottom:0;">
+                            <div class="measurement-title" style="justify-content:center;">১ম পাশ</div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_w1_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w1_in" placeholder="০"></div>
+                            </div>
+                        </div>
+                        <div class="measurement-card" style="margin-bottom:0;">
+                            <div class="measurement-title" style="justify-content:center;">২য় পাশ</div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_w2_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w2_in" placeholder="০"></div>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="grid-buttons">
+                        <button class="action-btn btn-clear" onclick="clearHisabArea()">মুছুন</button>
+                        <button class="action-btn btn-calc" onclick="calculateHisabArea()">হিসাব করুন</button>
+                    </div>
+                    <div class="result-box" id="res_hisab_area" style="display:none;">
+                        <div id="sqFt_h" style="color: #475569; font-size: 16px;"></div>
+                        <div id="shotok_h" class="highlight-result"></div>
+                        <div id="mixed_h" class="mixed-result"></div>
+                    </div>
                 </div>
 
-                <label>জমির প্রস্থ (চওড়া):</label>
-                <div class="grid-2">
-                    <div class="measurement-card" style="margin-bottom:0;">
-                        <div class="measurement-title" style="justify-content:center;">১ম পাশ</div>
+                <div id="hisab_tri" class="tab-content no-print">
+                    <div style="background:#e0f2fe; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13.5px; color:#0369a1; text-align:center; font-weight:600;">
+                        ত্রিভুজাকার জমির ৩টি বাহুর মাপ দিন
+                    </div>
+                    <div class="measurement-card">
+                        <div class="measurement-title" style="justify-content:center;">১ম বাহু</div>
                         <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_w1_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w1_in" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_a_ft" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_a_in" placeholder="০"></div>
                         </div>
                     </div>
-                    <div class="measurement-card" style="margin-bottom:0;">
-                        <div class="measurement-title" style="justify-content:center;">২য় পাশ</div>
+                    <div class="measurement-card">
+                        <div class="measurement-title" style="justify-content:center;">২য় বাহু</div>
                         <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_w2_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_w2_in" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_b_ft" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_b_in" placeholder="০"></div>
                         </div>
                     </div>
-                </div>
-
-                <div class="grid-buttons">
-                    <button class="action-btn btn-clear" onclick="clearHisabArea()">ক্লিয়ার</button>
-                    <button class="action-btn btn-calc" onclick="calculateHisabArea()">হিসাব করুন</button>
-                </div>
-                <div class="result-box" id="res_hisab_area" style="display:none;">
-                    <div id="sqFt_h" style="color: #475569; font-size: 16px;"></div>
-                    <div id="shotok_h" class="highlight-result"></div>
-                    <div id="mixed_h" class="mixed-result"></div>
-                </div>
-            </div>
-
-            <!-- ত্রিভুজাকার জমি -->
-            <div id="hisab_tri" class="tab-content no-print">
-                <div style="background:#eef2f5; padding:10px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#475569; text-align:center;">
-                    * ত্রিভুজাকার জমির ৩টি বাহুর মাপ দিয়ে নিখুঁত ক্ষেত্রফল বের করুন।
-                </div>
-                <div class="measurement-card">
-                    <div class="measurement-title" style="justify-content:center;">১ম বাহু</div>
-                    <div class="inner-grid-2">
-                        <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_a_ft" placeholder="০"></div>
-                        <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_a_in" placeholder="০"></div>
+                    <div class="measurement-card">
+                        <div class="measurement-title" style="justify-content:center;">৩য় বাহু</div>
+                        <div class="inner-grid-2">
+                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_c_ft" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_c_in" placeholder="০"></div>
+                        </div>
                     </div>
-                </div>
-                <div class="measurement-card">
-                    <div class="measurement-title" style="justify-content:center;">২য় বাহু</div>
-                    <div class="inner-grid-2">
-                        <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_b_ft" placeholder="০"></div>
-                        <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_b_in" placeholder="০"></div>
+
+                    <div class="grid-buttons">
+                        <button class="action-btn btn-clear" onclick="clearTriangleArea()">মুছুন</button>
+                        <button class="action-btn btn-calc" onclick="calculateTriangleArea()">হিসাব করুন</button>
                     </div>
-                </div>
-                <div class="measurement-card">
-                    <div class="measurement-title" style="justify-content:center;">৩য় বাহু</div>
-                    <div class="inner-grid-2">
-                        <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="t_c_ft" placeholder="০"></div>
-                        <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="t_c_in" placeholder="০"></div>
+                    <div class="result-box" id="res_hisab_tri" style="display:none;">
+                        <div id="sqFt_t" style="color: #475569; font-size: 16px;"></div>
+                        <div id="shotok_t" class="highlight-result"></div>
+                        <div id="mixed_t" class="mixed-result"></div>
                     </div>
                 </div>
 
-                <div class="grid-buttons">
-                    <button class="action-btn btn-clear" onclick="clearTriangleArea()">ক্লিয়ার</button>
-                    <button class="action-btn btn-calc" onclick="calculateTriangleArea()">হিসাব করুন</button>
-                </div>
-                <div class="result-box" id="res_hisab_tri" style="display:none;">
-                    <div id="sqFt_t" style="color: #475569; font-size: 16px;"></div>
-                    <div id="shotok_t" class="highlight-result"></div>
-                    <div id="mixed_t" class="mixed-result"></div>
-                </div>
-            </div>
-
-            <!-- প্রস্থ/দৈর্ঘ্য -->
-            <div id="hisab_rev" class="tab-content no-print">
-                <label>মোট জমির পরিমাণ:</label>
-                <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
-                    <div class="input-col"><input type="number" id="h_target_area" placeholder="যেমন: ৩.৩০"></div>
-                    <div class="input-col">
-                        <select id="h_area_unit">
-                            <option value="shotok" selected>শতক</option>
-                            <option value="katha">কাঠা</option>
-                            <option value="kura">কুড়া</option>
-                        </select>
+                <div id="hisab_rev" class="tab-content no-print">
+                    <label>মোট জমির পরিমাণ:</label>
+                    <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                        <div class="input-col"><input type="number" id="h_target_area" placeholder="যেমন: ৩.৩০"></div>
+                        <div class="input-col">
+                            <select id="h_area_unit">
+                                <option value="shotok" selected>শতক</option>
+                                <option value="katha">কাঠা</option>
+                                <option value="kura">কুড়া</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <label>জানা দিকের মাপ:</label>
-                <div class="measurement-card" style="width: 50%;">
-                    <div class="inner-grid-2">
-                        <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_known_ft" placeholder="০"></div>
-                        <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_known_in" placeholder="০"></div>
+                    <label>জানা দিকের মাপ:</label>
+                    <div class="measurement-card" style="width: 50%;">
+                        <div class="inner-grid-2">
+                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="h_known_ft" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="h_known_in" placeholder="০"></div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="grid-buttons">
-                    <button class="action-btn btn-clear" onclick="clearHisabRev()">ক্লিয়ার</button>
-                    <button class="action-btn btn-calc" onclick="calculateHisabRev()">হিসাব করুন</button>
-                </div>
-                <div class="result-box" id="res_hisab_rev" style="display:none;">
-                    <div id="req_h_side" class="highlight-result" style="color: #f07e26;"></div>
+                    <div class="grid-buttons">
+                        <button class="action-btn btn-clear" onclick="clearHisabRev()">মুছুন</button>
+                        <button class="action-btn btn-calc" onclick="calculateHisabRev()">হিসাব করুন</button>
+                    </div>
+                    <div class="result-box" id="res_hisab_rev" style="display:none;">
+                        <div id="req_h_side" class="highlight-result" style="color: #f07e26;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -460,112 +385,120 @@
              ========================================== -->
         <div id="screen_nol" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <button class="back-btn" onclick="goBackToMenu()">❮</button>
                 <h3 class="screen-title">নল এর হিসাব</h3>
             </div>
 
-            <div class="tabs no-print">
-                <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_nol', 'nol_area')">ক্ষেত্রফল নির্ণয়</button>
-                <button class="tab-btn" onclick="switchTabGroup(event, 'screen_nol', 'nol_rev')">প্রস্থ/দৈর্ঘ্য</button>
-            </div>
-
-            <div id="nol_area" class="tab-content active no-print">
-                <label>১ নলের মাপ নির্ধারণ করুন:</label>
-                <div class="grid-3">
-                    <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_size_hat" value="4"></div>
-                    <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_size_bighat" value="0"></div>
-                    <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_size_angul" value="0"></div>
+            <div class="content-area">
+                <div class="tabs no-print">
+                    <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_nol', 'nol_area')">ক্ষেত্রফল নির্ণয়</button>
+                    <button class="tab-btn" onclick="switchTabGroup(event, 'screen_nol', 'nol_rev')">প্রস্থ/দৈর্ঘ্য</button>
                 </div>
 
-                <label>জমির দৈর্ঘ্য:</label>
-                <div class="grid-4">
-                    <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_l_nol" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_l_hat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_l_bighat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_l_angul" placeholder="০"></div>
-                </div>
+                <div id="nol_area" class="tab-content active no-print">
+                    <label>১ নলের মাপ নির্ধারণ করুন:</label>
+                    <div class="grid-3">
+                        <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_size_hat" value="4"></div>
+                        <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_size_bighat" value="0"></div>
+                        <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_size_angul" value="0"></div>
+                    </div>
 
-                <label>জমির প্রস্থ:</label>
-                <div class="grid-4">
-                    <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_w_nol" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_w_hat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_w_bighat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_w_angul" placeholder="০"></div>
-                </div>
+                    <label>জমির দৈর্ঘ্য:</label>
+                    <div class="measurement-card">
+                        <div class="grid-4" style="margin-bottom:0;">
+                            <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_l_nol" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_l_hat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_l_bighat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_l_angul" placeholder="০"></div>
+                        </div>
+                    </div>
 
-                <div class="grid-buttons">
-                    <button class="action-btn btn-clear" onclick="clearNolArea()">ক্লিয়ার</button>
-                    <button class="action-btn btn-calc" onclick="calculateNolArea()">হিসাব করুন</button>
-                </div>
+                    <label>জমির প্রস্থ:</label>
+                    <div class="measurement-card">
+                        <div class="grid-4" style="margin-bottom:0;">
+                            <div class="input-col"><span class="input-label">নল</span><input type="number" id="n_w_nol" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">হাত</span><input type="number" id="n_w_hat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="n_w_bighat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="n_w_angul" placeholder="০"></div>
+                        </div>
+                    </div>
 
-                <div class="result-box" id="res_nol_area" style="display:none;">
-                    <div id="sqFt_n" style="color: #475569; font-size: 16px;"></div>
-                    <div id="shotok_n" class="highlight-result"></div>
-                    <div id="mixed_n" class="mixed-result"></div>
-                </div>
-            </div>
+                    <div class="grid-buttons">
+                        <button class="action-btn btn-clear" onclick="clearNolArea()">মুছুন</button>
+                        <button class="action-btn btn-calc" onclick="calculateNolArea()">হিসাব করুন</button>
+                    </div>
 
-            <div id="nol_rev" class="tab-content no-print">
-                <label>১ নলের মাপ নির্ধারণ করুন:</label>
-                <div class="grid-3">
-                    <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_size_hat" value="4"></div>
-                    <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_size_bighat" value="0"></div>
-                    <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_size_angul" value="0"></div>
-                </div>
-
-                <label>মোট জমির পরিমাণ:</label>
-                <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
-                    <div class="input-col"><input type="number" id="r_target_area" placeholder="যেমন: ৩.৩০"></div>
-                    <div class="input-col">
-                        <select id="r_area_unit">
-                            <option value="shotok" selected>শতক</option>
-                            <option value="katha">কাঠা</option>
-                            <option value="kura">কুড়া</option>
-                        </select>
+                    <div class="result-box" id="res_nol_area" style="display:none;">
+                        <div id="sqFt_n" style="color: #475569; font-size: 16px;"></div>
+                        <div id="shotok_n" class="highlight-result"></div>
+                        <div id="mixed_n" class="mixed-result"></div>
                     </div>
                 </div>
 
-                <label>জানা দিকের মাপ (দৈর্ঘ্য/প্রস্থ):</label>
-                <div class="grid-4">
-                    <div class="input-col"><span class="input-label">নল</span><input type="number" id="r_k_nol" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_k_hat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_k_bighat" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_k_angul" placeholder="০"></div>
-                </div>
+                <div id="nol_rev" class="tab-content no-print">
+                    <label>১ নলের মাপ নির্ধারণ করুন:</label>
+                    <div class="grid-3">
+                        <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_size_hat" value="4"></div>
+                        <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_size_bighat" value="0"></div>
+                        <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_size_angul" value="0"></div>
+                    </div>
 
-                <div class="grid-buttons">
-                    <button class="action-btn btn-clear" onclick="clearNolRev()">ক্লিয়ার</button>
-                    <button class="action-btn btn-calc" onclick="calculateNolRev()">হিসাব করুন</button>
-                </div>
+                    <label>মোট জমির পরিমাণ:</label>
+                    <div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+                        <div class="input-col"><input type="number" id="r_target_area" placeholder="যেমন: ৩.৩০"></div>
+                        <div class="input-col">
+                            <select id="r_area_unit">
+                                <option value="shotok" selected>শতক</option>
+                                <option value="katha">কাঠা</option>
+                                <option value="kura">কুড়া</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div class="result-box" id="res_nol_rev" style="display:none;">
-                    <div id="req_n_side" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
+                    <label>জানা দিকের মাপ (দৈর্ঘ্য/প্রস্থ):</label>
+                    <div class="measurement-card">
+                        <div class="grid-4" style="margin-bottom:0;">
+                            <div class="input-col"><span class="input-label">নল</span><input type="number" id="r_k_nol" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">হাত</span><input type="number" id="r_k_hat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">বিঘাত</span><input type="number" id="r_k_bighat" placeholder="০"></div>
+                            <div class="input-col"><span class="input-label">আঙুল</span><input type="number" id="r_k_angul" placeholder="০"></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-buttons">
+                        <button class="action-btn btn-clear" onclick="clearNolRev()">মুছুন</button>
+                        <button class="action-btn btn-calc" onclick="calculateNolRev()">হিসাব করুন</button>
+                    </div>
+
+                    <div class="result-box" id="res_nol_rev" style="display:none;">
+                        <div id="req_n_side" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- ==========================================
-             স্ক্রিন ৩: মাটির হিসাব
+             স্ক্রিন ৩: মাটির হিসাব (বর্গফুট)
              ========================================== -->
         <div id="screen_mati" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <button class="back-btn" onclick="goBackToMenu()">❮</button>
                 <h3 class="screen-title">মাটির হিসাব</h3>
             </div>
             
-            <div class="no-print">
+            <div class="content-area no-print">
                 <!-- Length -->
                 <div class="mati-section">
                     <label>দৈর্ঘ্য:</label>
                     <div id="mati_len_container" class="grid-2">
-                        <div class="measurement-card mati-row" style="margin-bottom:0;">
+                        <div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;">
                             <div class="measurement-title" style="justify-content:center;">মাপ ১</div>
                             <div class="inner-grid-2">
                                 <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
                                 <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div>
                             </div>
                         </div>
-                        <div class="measurement-card mati-row" style="margin-bottom:0;">
+                        <div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;">
                             <div class="measurement-title" style="justify-content:center;">মাপ ২</div>
                             <div class="inner-grid-2">
                                 <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
@@ -580,14 +513,14 @@
                 <div class="mati-section">
                     <label>প্রস্থ:</label>
                     <div id="mati_wid_container" class="grid-2">
-                        <div class="measurement-card mati-row" style="margin-bottom:0;">
+                        <div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;">
                             <div class="measurement-title" style="justify-content:center;">মাপ ১</div>
                             <div class="inner-grid-2">
                                 <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
                                 <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div>
                             </div>
                         </div>
-                        <div class="measurement-card mati-row" style="margin-bottom:0;">
+                        <div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;">
                             <div class="measurement-title" style="justify-content:center;">মাপ ২</div>
                             <div class="inner-grid-2">
                                 <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
@@ -602,7 +535,7 @@
                 <div class="mati-section">
                     <label>উচ্চতা/গভীরতা:</label>
                     <div id="mati_hei_container" class="grid-2">
-                        <div class="measurement-card mati-row" style="margin-bottom:0;">
+                        <div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;">
                             <div class="measurement-title" style="justify-content:center;">মাপ ১</div>
                             <div class="inner-grid-2">
                                 <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
@@ -620,11 +553,11 @@
                     <button class="action-btn btn-clear" onclick="clearMatiArea()">মুছুন</button>
                     <button class="action-btn btn-calc" onclick="calculateMatiArea()">পরিমাপ</button>
                 </div>
-            </div>
 
-            <div class="result-box" id="res_mati_area" style="display:none;">
-                <div style="color: #475569; font-size: 18px; font-weight: 600;">মোট মাটি: <span id="mati_total_cft" class="highlight-result"></span> বর্গফুট</div>
-                <div id="mati_price_container" style="color: #f07e26; font-size: 20px; font-weight: 700; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; display:none;">মোট দাম: <span id="mati_total_price"></span> টাকা</div>
+                <div class="result-box" id="res_mati_area" style="display:none;">
+                    <div style="color: #475569; font-size: 18px; font-weight: 600;">মোট মাটি: <span id="mati_total_cft" class="highlight-result"></span> বর্গফুট</div>
+                    <div id="mati_price_container" style="color: #f07e26; font-size: 20px; font-weight: 700; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; display:none;">মোট দাম: <span id="mati_total_price"></span> টাকা</div>
+                </div>
             </div>
         </div>
 
@@ -633,134 +566,130 @@
              ========================================== -->
         <div id="screen_wood" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="openScreen('screen_menu')">❮ ব্যাক</button>
+                <button class="back-btn" onclick="goBackToMenu()">❮</button>
                 <h3 class="screen-title">গাছ ও কাঠের হিসাব</h3>
             </div>
 
-            <div class="tabs no-print">
-                <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_wood', 'wood_round')">গোল কাঠ</button>
-                <button class="tab-btn" onclick="switchTabGroup(event, 'screen_wood', 'wood_flat')">চ্যাপ্টা/সাইজ কাঠ</button>
-            </div>
+            <div class="content-area">
+                <div class="tabs no-print">
+                    <button class="tab-btn active" onclick="switchTabGroup(event, 'screen_wood', 'wood_round')">গোল কাঠ</button>
+                    <button class="tab-btn" onclick="switchTabGroup(event, 'screen_wood', 'wood_flat')">চ্যাপ্টা/সাইজ কাঠ</button>
+                </div>
 
-            <!-- গোল কাঠ -->
-            <div id="wood_round" class="tab-content active">
-                <div class="no-print">
-                    <div style="background:#eef2f5; padding:10px; border-radius:8px; margin-bottom:15px; font-size:13px; color:#475569; text-align:center;">
-                        * গোল কাঠের জন্য <b>হোপাস রুল (Hoppus Rule)</b> ব্যবহার করা হয়েছে।
-                    </div>
-                    
-                    <div class="measurement-card">
-                        <label style="margin-top:0;">দৈর্ঘ্য (লম্বা):</label>
-                        <div class="inner-grid-2" style="margin-bottom:8px;">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="wr_l_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="wr_l_in" placeholder="০"></div>
+                <!-- গোল কাঠ -->
+                <div id="wood_round" class="tab-content active">
+                    <div class="no-print">
+                        <div style="background:#e0f2fe; padding:12px; border-radius:10px; margin-bottom:15px; font-size:13.5px; color:#0369a1; text-align:center; font-weight:600;">
+                            * গোল কাঠের জন্য হোপাস রুল ব্যবহার করা হয়েছে
                         </div>
-                        <label style="margin-top:0;">বেড়/পরিধি (মাঝখানে):</label>
-                        <div class="inner-grid-2" style="margin-bottom:8px;">
-                            <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="wr_g_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="wr_g_in" placeholder="০"></div>
+                        
+                        <div class="measurement-card">
+                            <label style="margin-top:0;">দৈর্ঘ্য (লম্বা):</label>
+                            <div class="inner-grid-2" style="margin-bottom:8px;">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="wr_l_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="wr_l_in" placeholder="০"></div>
+                            </div>
+                            <label style="margin-top:0;">বেড়/পরিধি (মাঝখানে):</label>
+                            <div class="inner-grid-2" style="margin-bottom:8px;">
+                                <div class="input-col"><span class="input-label">ফুট</span><input type="number" id="wr_g_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" id="wr_g_in" placeholder="০"></div>
+                            </div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">সংখ্যা</span><input type="number" id="wr_qty" value="1"></div>
+                                <div class="input-col"><span class="input-label">দাম (প্রতি CFT)</span><input type="number" id="wr_rate" placeholder="০"></div>
+                            </div>
                         </div>
-                        <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">সংখ্যা</span><input type="number" id="wr_qty" value="1"></div>
-                            <div class="input-col"><span class="input-label">দাম (প্রতি CFT)</span><input type="number" id="wr_rate" placeholder="০"></div>
+
+                        <div class="grid-buttons">
+                            <button class="action-btn btn-clear" onclick="clearRoundInputs()">মুছুন</button>
+                            <button class="action-btn btn-calc" onclick="addRoundWood()">হিসাব করুন</button>
                         </div>
                     </div>
 
-                    <div class="grid-buttons">
-                        <button class="action-btn btn-clear" onclick="clearRoundInputs()">মুছুন</button>
-                        <button class="action-btn btn-calc" onclick="addRoundWood()">হিসাব করুন</button>
+                    <!-- Report Area For Round -->
+                    <div id="round_report_area" style="display:none; margin-top:30px;">
+                        <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
+                        
+                        <div style="overflow-x:auto;">
+                            <table class="report-table">
+                                <thead>
+                                    <tr><th>নং</th><th>দৈর্ঘ্য</th><th>পরিধি</th><th>সংখ্যা</th><th>ছেফটি</th><th>টাকা</th></tr>
+                                </thead>
+                                <tbody id="round_tbody"></tbody>
+                                <tfoot>
+                                    <tr style="background:#f1f5f9;">
+                                        <td colspan="4" style="text-align:right;">মোট =</td>
+                                        <td id="round_total_cft">০</td>
+                                        <td id="round_total_price">০</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <div class="grid-buttons-3 no-print">
+                            <button class="action-btn btn-copy" onclick="copyReportText('round')">📋 কপি</button>
+                            <button class="action-btn btn-share" onclick="shareReportText('round')">🔗 শেয়ার</button>
+                            <button class="action-btn btn-print" onclick="triggerPrint('round_report_area', 'গোল কাঠের হিসাব রিপোর্ট')">🖨️ প্রিন্ট</button>
+                        </div>
+                        <div class="grid-buttons no-print" style="margin-top:10px;">
+                            <button class="action-btn btn-clear" style="grid-column: span 2;" onclick="clearRoundList()">তালিকা মুছুন</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Report Table for Round Wood -->
-                <div id="round_report_area" style="display:none; margin-top:20px;">
-                    <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
-                    <div class="print-header" style="display:none;">
-                        <h2>জমি ও কাঠ পরিমাপ অ্যাপ</h2>
-                        <p id="round_print_title">গোল কাঠের হিসাব রিপোর্ট</p>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table class="report-table">
-                            <thead>
-                                <tr><th>নং</th><th>দৈর্ঘ্য</th><th>পরিধি</th><th>সংখ্যা</th><th>ছেফটি</th><th>টাকা</th></tr>
-                            </thead>
-                            <tbody id="round_tbody"></tbody>
-                            <tfoot>
-                                <tr style="background:#f1f5f9;">
-                                    <td colspan="4" style="text-align:right;">মোট =</td>
-                                    <td id="round_total_cft">০</td>
-                                    <td id="round_total_price">০</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    
-                    <div class="grid-buttons-3 no-print">
-                        <button class="action-btn btn-copy" onclick="copyReportText('round')">📋 কপি</button>
-                        <button class="action-btn btn-share" onclick="shareReportText('round')">🔗 শেয়ার</button>
-                        <button class="action-btn btn-print" onclick="window.print()">🖨️ প্রিন্ট</button>
-                    </div>
-                    <div class="grid-buttons no-print" style="margin-top:10px;">
-                        <button class="action-btn btn-clear" style="grid-column: span 2;" onclick="clearRoundList()">তালিকা মুছুন</button>
-                    </div>
-                </div>
-            </div>
+                <!-- চ্যাপ্টা কাঠ -->
+                <div id="wood_flat" class="tab-content">
+                    <div class="no-print">
+                        <div class="measurement-card">
+                            <label style="margin-top:0;">কাঠের মাপ:</label>
+                            <div class="inner-grid-2" style="margin-bottom:8px;">
+                                <div class="input-col"><span class="input-label">দৈর্ঘ্য (ফুট)</span><input type="number" id="wf_l_ft" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">দৈর্ঘ্য (ইঞ্চি)</span><input type="number" id="wf_l_in" placeholder="০"></div>
+                            </div>
+                            <div class="inner-grid-2" style="margin-bottom:8px;">
+                                <div class="input-col"><span class="input-label">প্রস্থ (ইঞ্চি)</span><input type="number" id="wf_w_in" placeholder="০"></div>
+                                <div class="input-col"><span class="input-label">পুরু (ইঞ্চি)</span><input type="number" id="wf_h_in" placeholder="০"></div>
+                            </div>
+                            <div class="inner-grid-2">
+                                <div class="input-col"><span class="input-label">সংখ্যা</span><input type="number" id="wf_qty" value="1"></div>
+                                <div class="input-col"><span class="input-label">দাম (প্রতি CFT)</span><input type="number" id="wf_rate" placeholder="০"></div>
+                            </div>
+                        </div>
 
-            <!-- চ্যাপ্টা কাঠ -->
-            <div id="wood_flat" class="tab-content">
-                <div class="no-print">
-                    <div class="measurement-card">
-                        <label style="margin-top:0;">কাঠের মাপ:</label>
-                        <div class="inner-grid-2" style="margin-bottom:8px;">
-                            <div class="input-col"><span class="input-label">দৈর্ঘ্য (ফুট)</span><input type="number" id="wf_l_ft" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">দৈর্ঘ্য (ইঞ্চি)</span><input type="number" id="wf_l_in" placeholder="০"></div>
-                        </div>
-                        <div class="inner-grid-2" style="margin-bottom:8px;">
-                            <div class="input-col"><span class="input-label">প্রস্থ (ইঞ্চি)</span><input type="number" id="wf_w_in" placeholder="০"></div>
-                            <div class="input-col"><span class="input-label">পুরু (ইঞ্চি)</span><input type="number" id="wf_h_in" placeholder="০"></div>
-                        </div>
-                        <div class="inner-grid-2">
-                            <div class="input-col"><span class="input-label">সংখ্যা</span><input type="number" id="wf_qty" value="1"></div>
-                            <div class="input-col"><span class="input-label">দাম (প্রতি CFT)</span><input type="number" id="wf_rate" placeholder="০"></div>
+                        <div class="grid-buttons">
+                            <button class="action-btn btn-clear" onclick="clearFlatInputs()">মুছুন</button>
+                            <button class="action-btn btn-calc" onclick="addFlatWood()">হিসাব করুন</button>
                         </div>
                     </div>
 
-                    <div class="grid-buttons">
-                        <button class="action-btn btn-clear" onclick="clearFlatInputs()">মুছুন</button>
-                        <button class="action-btn btn-calc" onclick="addFlatWood()">হিসাব করুন</button>
-                    </div>
-                </div>
-
-                <!-- Report Table for Flat Wood -->
-                <div id="flat_report_area" style="display:none; margin-top:20px;">
-                    <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
-                    <div class="print-header" style="display:none;">
-                        <h2>জমি ও কাঠ পরিমাপ অ্যাপ</h2>
-                        <p id="flat_print_title">চ্যাপ্টা কাঠের হিসাব রিপোর্ট</p>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table class="report-table">
-                            <thead>
-                                <tr><th>নং</th><th>দৈর্ঘ্য</th><th>L×W×T</th><th>সংখ্যা</th><th>ছেফটি</th><th>টাকা</th></tr>
-                            </thead>
-                            <tbody id="flat_tbody"></tbody>
-                            <tfoot>
-                                <tr style="background:#f1f5f9;">
-                                    <td colspan="4" style="text-align:right;">মোট =</td>
-                                    <td id="flat_total_cft">০</td>
-                                    <td id="flat_total_price">০</td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                    
-                    <div class="grid-buttons-3 no-print">
-                        <button class="action-btn btn-copy" onclick="copyReportText('flat')">📋 কপি</button>
-                        <button class="action-btn btn-share" onclick="shareReportText('flat')">🔗 শেয়ার</button>
-                        <button class="action-btn btn-print" onclick="window.print()">🖨️ প্রিন্ট</button>
-                    </div>
-                    <div class="grid-buttons no-print" style="margin-top:10px;">
-                        <button class="action-btn btn-clear" style="grid-column: span 2;" onclick="clearFlatList()">তালিকা মুছুন</button>
+                    <!-- Report Area For Flat -->
+                    <div id="flat_report_area" style="display:none; margin-top:30px;">
+                        <h3 class="no-print" style="color:#1e293b; font-size:16px; margin-bottom:10px;">হিসাবের তালিকা:</h3>
+                        
+                        <div style="overflow-x:auto;">
+                            <table class="report-table">
+                                <thead>
+                                    <tr><th>নং</th><th>দৈর্ঘ্য</th><th>L×W×T</th><th>সংখ্যা</th><th>ছেফটি</th><th>টাকা</th></tr>
+                                </thead>
+                                <tbody id="flat_tbody"></tbody>
+                                <tfoot>
+                                    <tr style="background:#f1f5f9;">
+                                        <td colspan="4" style="text-align:right;">মোট =</td>
+                                        <td id="flat_total_cft">০</td>
+                                        <td id="flat_total_price">০</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <div class="grid-buttons-3 no-print">
+                            <button class="action-btn btn-copy" onclick="copyReportText('flat')">📋 কপি</button>
+                            <button class="action-btn btn-share" onclick="shareReportText('flat')">🔗 শেয়ার</button>
+                            <button class="action-btn btn-print" onclick="triggerPrint('flat_report_area', 'চ্যাপ্টা/সাইজ কাঠের হিসাব রিপোর্ট')">🖨️ প্রিন্ট</button>
+                        </div>
+                        <div class="grid-buttons no-print" style="margin-top:10px;">
+                            <button class="action-btn btn-clear" style="grid-column: span 2;" onclick="clearFlatList()">তালিকা মুছুন</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -768,54 +697,96 @@
     </div>
 
     <script>
+        // Force update cache on load
+        if ('caches' in window) {
+            caches.keys().then(function(names) {
+                for (let name of names) {
+                    caches.delete(name);
+                }
+            });
+        }
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./service-worker.js').then(function(reg) {
+                    reg.update();
+                }).catch(function(err) {
+                    console.log(err);
+                });
+            });
+        }
+
         // Back Button & History Management
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', function() {
             history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname);
-            
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./service-worker.js').catch(err => console.log(err));
-            }
         });
 
-        window.addEventListener('popstate', (event) => {
+        window.addEventListener('popstate', function(event) {
             if (event.state && event.state.screen) {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
                 document.getElementById(event.state.screen).classList.add('active');
             } else {
-                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
                 document.getElementById('screen_menu').classList.add('active');
             }
         });
 
-        function openScreen(screenId, addToHistory = true) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            
-            window.scrollTo(0, 0); 
-            
-            if (addToHistory) {
-                if (screenId === 'screen_menu') {
-                    history.pushState({ screen: 'screen_menu' }, '', window.location.pathname);
-                } else {
-                    history.pushState({ screen: screenId }, '', '#' + screenId);
-                }
+        function goBackToMenu() {
+            if (history.state && history.state.screen !== 'screen_menu') {
+                history.back();
+            } else {
+                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+                document.getElementById('screen_menu').classList.add('active');
+                history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname);
             }
+        }
+
+        function openScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0); 
+            history.pushState({ screen: screenId }, '', '#' + screenId);
+        }
+
+        // --- JavaScript Based Print Function (100% Reliable for Mobile) ---
+        function triggerPrint(elementId, titleText) {
+            // Get the HTML of the table to print
+            const printContent = document.getElementById(elementId).querySelector('table').outerHTML;
+            
+            // Create a completely separate print container dynamically
+            let printDiv = document.getElementById('print_container');
+            if(!printDiv) {
+                printDiv = document.createElement('div');
+                printDiv.id = 'print_container';
+                document.body.appendChild(printDiv);
+            }
+            
+            printDiv.innerHTML = `
+                <div class="print-header">
+                    <h2>জমি ও কাঠ পরিমাপ</h2>
+                    <p>${titleText}</p>
+                </div>
+                ${printContent}
+            `;
+            
+            window.print();
         }
 
         function toBengaliNum(engNum) {
             const bnNumbers = {'0': '০', '1': '১', '2': '২', '3': '৩', '4': '৪', '5': '৫', '6': '৬', '7': '৭', '8': '৮', '9': '৯', '.': '.'};
-            return String(engNum).split('').map(char => bnNumbers[char] || char).join('');
+            return String(engNum).split('').map(function(char) { return bnNumbers[char] || char; }).join('');
         }
 
         function switchTabGroup(evt, screenId, tabId) {
             const screen = document.getElementById(screenId);
-            screen.querySelectorAll('.tab-content').forEach(s => s.classList.remove('active'));
-            screen.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            screen.querySelectorAll('.tab-content').forEach(function(s) { s.classList.remove('active'); });
+            screen.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
             document.getElementById(tabId).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
 
-        /* ---------------- অন্যান্য হিসাব কোড ---------------- */
+        /* ---------------- জমির হিসাব কোড ---------------- */
         const SQ_FEET_PER_SHOTOK = 435.6;
         const FT_PER_HAT = 1.5;
         const FT_PER_BIGHAT = 0.75;
@@ -830,8 +801,8 @@
             let dhurCount = ((totalKatha % 20) - kathaCount) * 20;
 
             let mixedText = "মোট: ";
-            if (kuraCount > 0) mixedText += toBengaliNum(kuraCount) + " কুড়া ";
-            if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount) + " কাঠা ";
+            if (kuraCount > 0) mixedText += toBengaliNum(kuraCount.toString()) + " কুড়া ";
+            if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount.toString()) + " কাঠা ";
             mixedText += toBengaliNum(dhurCount.toFixed(2)) + " ধুর";
 
             document.getElementById(boxId).style.display = 'block';
@@ -854,7 +825,7 @@
         }
 
         function clearHisabArea() {
-            document.querySelectorAll('#hisab_area input').forEach(inp => inp.value = '');
+            document.querySelectorAll('#hisab_area input').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_hisab_area').style.display = 'none';
         }
 
@@ -872,7 +843,7 @@
         }
 
         function clearTriangleArea() {
-            document.querySelectorAll('#hisab_tri input').forEach(inp => inp.value = '');
+            document.querySelectorAll('#hisab_tri input').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_hisab_tri').style.display = 'none';
         }
 
@@ -894,14 +865,15 @@
             let ans_in = (requiredFt - ans_ft) * 12;
 
             document.getElementById('res_hisab_rev').style.display = 'block';
-            document.getElementById('req_h_side').innerHTML = "অজানা দিকের মাপ লাগবে:<br>" + toBengaliNum(ans_ft) + " ফুট " + toBengaliNum(ans_in.toFixed(2)) + " ইঞ্চি";
+            document.getElementById('req_h_side').innerHTML = "অজানা দিকের মাপ লাগবে:<br>" + toBengaliNum(ans_ft.toString()) + " ফুট " + toBengaliNum(ans_in.toFixed(2)) + " ইঞ্চি";
         }
 
         function clearHisabRev() {
-            document.querySelectorAll('#hisab_rev input').forEach(inp => inp.value = '');
+            document.querySelectorAll('#hisab_rev input').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_hisab_rev').style.display = 'none';
         }
 
+        /* ---------------- নলের হিসাব কোড ---------------- */
         function getNolFeet(n, h, b, a, nolSizeInFeet) { return (n * nolSizeInFeet) + (h * FT_PER_HAT) + (b * FT_PER_BIGHAT) + (a * FT_PER_ANGUL); }
 
         function calculateNolArea() {
@@ -919,7 +891,7 @@
         }
 
         function clearNolArea() {
-            document.querySelectorAll('#nol_area input:not(#n_size_hat):not(#n_size_bighat):not(#n_size_angul)').forEach(inp => inp.value = '');
+            document.querySelectorAll('#nol_area input:not(#n_size_hat):not(#n_size_bighat):not(#n_size_angul)').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_nol_area').style.display = 'none';
         }
 
@@ -945,11 +917,11 @@
             let reqB = Math.floor(remIn / 9); let reqA = remIn % 9;
 
             document.getElementById('res_nol_rev').style.display = 'block';
-            document.getElementById('req_n_side').innerHTML = "অন্য দিকের মাপ লাগবে:<br>" + toBengaliNum(reqN) + " নল, " + toBengaliNum(reqH) + " হাত, " + toBengaliNum(reqB) + " বিঘাত, " + toBengaliNum(reqA.toFixed(2)) + " আঙুল";
+            document.getElementById('req_n_side').innerHTML = "অন্য দিকের মাপ লাগবে:<br>" + toBengaliNum(reqN.toString()) + " নল, " + toBengaliNum(reqH.toString()) + " হাত, " + toBengaliNum(reqB.toString()) + " বিঘাত, " + toBengaliNum(reqA.toFixed(2)) + " আঙুল";
         }
 
         function clearNolRev() {
-            document.querySelectorAll('#nol_rev input:not(#r_size_hat):not(#r_size_bighat):not(#r_size_angul)').forEach(inp => inp.value = '');
+            document.querySelectorAll('#nol_rev input:not(#r_size_hat):not(#r_size_bighat):not(#r_size_angul)').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_nol_rev').style.display = 'none';
         }
 
@@ -959,21 +931,12 @@
             const count = container.querySelectorAll('.mati-row').length + 1;
             const div = document.createElement('div');
             div.className = 'measurement-card mati-row';
-            div.innerHTML = `
-                <div class="measurement-title" style="justify-content:space-between; align-items:center;">
-                    <span>মাপ ${toBengaliNum(count.toString())}</span>
-                    <button class="remove-btn" onclick="this.parentElement.parentElement.remove();">❌</button>
-                </div>
-                <div class="inner-grid-2">
-                    <div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div>
-                    <div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div>
-                </div>
-            `;
+            div.innerHTML = '<div class="measurement-title" style="justify-content:space-between; align-items:center;"><span>মাপ ' + toBengaliNum(count.toString()) + '</span><button class="remove-btn" onclick="this.parentElement.parentElement.remove();">❌</button></div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div>';
             container.appendChild(div);
         }
 
         function calculateMatiArea() {
-            const getAvg = (containerId) => {
+            const getAvg = function(containerId) {
                 const container = document.getElementById(containerId);
                 const ftInputs = container.querySelectorAll('.mati-ft');
                 const inInputs = container.querySelectorAll('.mati-in');
@@ -996,14 +959,14 @@
             document.getElementById('res_mati_area').style.display = 'block';
             document.getElementById('mati_total_cft').innerText = toBengaliNum(totalCft.toFixed(2));
             if (rate > 0) {
-                document.getElementById('mati_total_price').innerText = toBengaliNum(Math.round(totalCft * rate));
+                document.getElementById('mati_total_price').innerText = toBengaliNum(Math.round(totalCft * rate).toString());
                 document.getElementById('mati_price_container').style.display = 'block';
             } else { document.getElementById('mati_price_container').style.display = 'none'; }
         }
 
         function clearMatiArea() {
-            const resetHTMLTwo = `<div class="measurement-card mati-row" style="margin-bottom:0;"><div class="measurement-title" style="justify-content:center;">মাপ ১</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div><div class="measurement-card mati-row" style="margin-bottom:0;"><div class="measurement-title" style="justify-content:center;">মাপ ২</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div>`;
-            const resetHTMLOne = `<div class="measurement-card mati-row" style="margin-bottom:0;"><div class="measurement-title" style="justify-content:center;">মাপ ১</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div>`;
+            const resetHTMLTwo = '<div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;"><div class="measurement-title" style="justify-content:center;">মাপ ১</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div><div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;"><div class="measurement-title" style="justify-content:center;">মাপ ২</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div>';
+            const resetHTMLOne = '<div class="measurement-card mati-row" style="margin-bottom:0; padding:10px;"><div class="measurement-title" style="justify-content:center;">মাপ ১</div><div class="inner-grid-2"><div class="input-col"><span class="input-label">ফুট</span><input type="number" class="mati-ft" placeholder="০"></div><div class="input-col"><span class="input-label">ইঞ্চি</span><input type="number" class="mati-in" placeholder="০"></div></div></div>';
             
             document.getElementById('mati_len_container').innerHTML = resetHTMLTwo;
             document.getElementById('mati_wid_container').innerHTML = resetHTMLTwo;
@@ -1073,17 +1036,17 @@
             let totalCft = 0;
             let totalPrice = 0;
 
-            roundWoodList.forEach((item, idx) => {
+            roundWoodList.forEach(function(item, idx) {
                 totalCft += item.cft;
                 totalPrice += item.price;
-                tbody += `<tr>
-                    <td>${toBengaliNum((idx + 1).toString())}</td>
-                    <td>${toBengaliNum(item.len)}</td>
-                    <td>${toBengaliNum(item.girth)}</td>
-                    <td>${toBengaliNum(item.qty.toString())}</td>
-                    <td>${toBengaliNum(item.cft.toFixed(2))}</td>
-                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-'}</td>
-                </tr>`;
+                tbody += "<tr>" +
+                    "<td>" + toBengaliNum((idx + 1).toString()) + "</td>" +
+                    "<td>" + toBengaliNum(item.len) + "</td>" +
+                    "<td>" + toBengaliNum(item.girth) + "</td>" +
+                    "<td>" + toBengaliNum(item.qty.toString()) + "</td>" +
+                    "<td>" + toBengaliNum(item.cft.toFixed(2)) + "</td>" +
+                    "<td>" + (item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-') + "</td>" +
+                "</tr>";
             });
 
             document.getElementById('round_tbody').innerHTML = tbody;
@@ -1117,9 +1080,9 @@
 
             let dimText = "";
             if (l_ft > 0) dimText += l_ft + "'";
-            if (l_in > 0) dimText += " " + l_in + "''";
+            if (l_in > 0) dimText += " " + l_in + '"';
             if (dimText === "") dimText = "০";
-            dimText += " x " + toBengaliNum(w_in.toString()) + "'' x " + toBengaliNum(h_in.toString()) + "''";
+            dimText += " x " + toBengaliNum(w_in.toString()) + '" x ' + toBengaliNum(h_in.toString()) + '"';
 
             flatWoodList.push({
                 len: formatDim(l_ft, l_in),
@@ -1152,17 +1115,17 @@
             let totalCft = 0;
             let totalPrice = 0;
 
-            flatWoodList.forEach((item, idx) => {
+            flatWoodList.forEach(function(item, idx) {
                 totalCft += item.cft;
                 totalPrice += item.price;
-                tbody += `<tr>
-                    <td>${toBengaliNum((idx + 1).toString())}</td>
-                    <td>${toBengaliNum(item.len)}</td>
-                    <td>${item.dim}</td>
-                    <td>${toBengaliNum(item.qty.toString())}</td>
-                    <td>${toBengaliNum(item.cft.toFixed(2))}</td>
-                    <td>${item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-'}</td>
-                </tr>`;
+                tbody += "<tr>" +
+                    "<td>" + toBengaliNum((idx + 1).toString()) + "</td>" +
+                    "<td>" + toBengaliNum(item.len) + "</td>" +
+                    "<td>" + item.dim + "</td>" +
+                    "<td>" + toBengaliNum(item.qty.toString()) + "</td>" +
+                    "<td>" + toBengaliNum(item.cft.toFixed(2)) + "</td>" +
+                    "<td>" + (item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '-') + "</td>" +
+                "</tr>";
             });
 
             document.getElementById('flat_tbody').innerHTML = tbody;
@@ -1179,22 +1142,28 @@
 
         // ================= SHARE & COPY LOGIC =================
         function generateShareText(type) {
-            let text = type === 'round' ? `গোল কাঠের হিসাব রিপোর্ট:\n--------------------\n` : `চ্যাপ্টা কাঠের হিসাব রিপোর্ট:\n--------------------\n`;
-            let list = type === 'round' ? roundWoodList : flatWoodList;
-            
-            let tCft = 0; let tPrice = 0; let tQty = 0;
+            var text = (type === 'round') ? "গোল কাঠের হিসাব রিপোর্ট:\n--------------------\n" : "চ্যাপ্টা/সাইজ কাঠের হিসাব রিপোর্ট:\n--------------------\n";
+            var list = (type === 'round') ? roundWoodList : flatWoodList;
+            var tCft = 0, tPrice = 0, tQty = 0;
 
-            list.forEach((item, index) => {
+            list.forEach(function(item, index) {
                 tCft += item.cft; tPrice += item.price; tQty += item.qty;
+                text += toBengaliNum((index+1).toString()) + ". ";
                 if(type === 'round') {
-                    text += `${toBengaliNum((index+1).toString())}. বেড়: ${toBengaliNum(item.girth)}, দৈর্ঘ্য: ${toBengaliNum(item.len)}, সংখ্যা: ${toBengaliNum(item.qty.toString())}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price).toString()) : '০'} টাকা\n`;
+                    text += "বেড়: " + toBengaliNum(item.girth) + ", দৈর্ঘ্য: " + toBengaliNum(item.len);
                 } else {
-                    text += `${toBengaliNum((index+1).toString())}. মাপ: ${item.dim}, সংখ্যা: ${toBengaliNum(item.qty.toString())}, CFT: ${toBengaliNum(item.cft.toFixed(2))}, দাম: ${item.price>0 ? toBengaliNum(Math.round(item.price).toString()) : '০'} টাকা\n`;
+                    text += "মাপ: " + item.dim;
                 }
+                text += ", সংখ্যা: " + toBengaliNum(item.qty.toString()) + ", CFT: " + toBengaliNum(item.cft.toFixed(2));
+                var priceStr = item.price > 0 ? toBengaliNum(Math.round(item.price).toString()) : '০';
+                text += ", দাম: " + priceStr + " টাকা\n";
             });
 
-            text += `--------------------\nমোট সংখ্যা: ${toBengaliNum(tQty.toString())} টি\nমোট সিএফটি: ${toBengaliNum(tCft.toFixed(2))}\n`;
-            if (tPrice > 0) text += `মোট দাম: ${toBengaliNum(Math.round(tPrice).toString())} টাকা`;
+            text += "--------------------\nমোট সংখ্যা: " + toBengaliNum(tQty.toString()) + " টি\n";
+            text += "মোট সিএফটি: " + toBengaliNum(tCft.toFixed(2)) + "\n";
+            if (tPrice > 0) {
+                text += "মোট দাম: " + toBengaliNum(Math.round(tPrice).toString()) + " টাকা";
+            }
             return text;
         }
 
@@ -1215,9 +1184,9 @@
         function copyReportText(type) {
             let rawShareText = generateShareText(type);
             if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(rawShareText).then(() => {
+                navigator.clipboard.writeText(rawShareText).then(function() {
                     alert("রিপোর্ট কপি করা হয়েছে!");
-                }).catch(err => {
+                }).catch(function(err) {
                     fallbackCopyTextToClipboard(rawShareText);
                 });
             } else {
@@ -1233,7 +1202,7 @@
                     text: rawShareText
                 }).catch(console.error);
             } else {
-                alert(`আপনার ব্রাউজার সরাসরি শেয়ার সাপোর্ট করে না।\nঅনুগ্রহ করে 'কপি' বাটনে ক্লিক করে টেক্সটটি শেয়ার করুন।`);
+                alert("আপনার ব্রাউজার সরাসরি শেয়ার সাপোর্ট করে না।\nঅনুগ্রহ করে 'কপি' বাটনে ক্লিক করে টেক্সটটি শেয়ার করুন।");
             }
         }
     </script>

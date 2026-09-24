@@ -9,6 +9,19 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 
+// Middleware for PWA and manifest headers
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (req.path === '/manifest.json') {
+    res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+  } else if (req.path === '/service-worker.js') {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Service-Worker-Allowed', '/');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  }
+  next();
+});
+
 // Serve static assets from root directory
 app.use(express.static(__dirname));
 

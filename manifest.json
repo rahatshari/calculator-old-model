@@ -1,6 +1,5 @@
 {
-  "id": "/",
-  "name": "জমি ও কাঠ পরিমাপ - ক্যালকুলেটর",
+  "name": "জমি ও কাঠ পরিমাপ",
   "short_name": "জমি ও কাঠ",
   "description": "সম্পূর্ণ অফলাইন জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।",
   "start_url": "/",
@@ -9,6 +8,7 @@
   "orientation": "portrait",
   "background_color": "#123e6d",
   "theme_color": "#123e6d",
+  "prefer_related_applications": false,
   "categories": [
     "utilities",
     "productivity"
@@ -19,6 +19,12 @@
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512.png",

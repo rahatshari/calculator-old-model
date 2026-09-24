@@ -8,16 +8,16 @@
     <meta property="og:title" content="জমি ও কাঠ পরিমাপ">
     <meta property="og:description" content="জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
     
-    <!-- PWA ও আইকন লিংক -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- PWA ও আইকন লিংক (GitHub Pages ও যে কোনো সাব-ডিরেক্টরিতে কাজ করার জন্য Relative Paths) -->
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#123e6d">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="জমি ও কাঠ">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1577,10 +1577,10 @@
             window.open(window.location.href, '_blank');
         }
 
-        // Robust PWA Service Worker Registration
+        // Robust PWA Service Worker Registration (Relative path for GitHub Pages & Root)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js')
+                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
                     .then(function(reg) {
                         console.log('[PWA] Service Worker registered with scope:', reg.scope);
                     })

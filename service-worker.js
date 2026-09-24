@@ -1,12 +1,14 @@
-const CACHE_NAME = 'jami-wood-offline-v5';
+const CACHE_NAME = 'jami-wood-offline-v7';
 const PRECACHE_URLS = [
-    '/',
-    '/index.html',
-    '/manifest.json',
-    '/icon.png',
-    '/icon-192.png',
-    '/icon-512.png',
-    '/apple-touch-icon.png',
+    './',
+    './index.html',
+    './manifest.json',
+    './icon.png',
+    './icon-192.png',
+    './icon-maskable-192.png',
+    './icon-512.png',
+    './icon-maskable-512.png',
+    './apple-touch-icon.png',
     'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap'
 ];
 
@@ -14,7 +16,6 @@ const PRECACHE_URLS = [
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME).then(async cache => {
-            // Cache local URLs
             for (const url of PRECACHE_URLS) {
                 try {
                     await cache.add(url);
@@ -61,8 +62,8 @@ self.addEventListener('fetch', event => {
                     return networkResponse;
                 })
                 .catch(() => {
-                    return caches.match('/index.html')
-                        .then(cachedHtml => cachedHtml || caches.match('/'));
+                    return caches.match('./index.html')
+                        .then(cachedHtml => cachedHtml || caches.match('./') || caches.match('/index.html') || caches.match('/'));
                 })
         );
         return;
@@ -90,7 +91,7 @@ self.addEventListener('fetch', event => {
             }).catch(() => {
                 // If offline and requesting an image, fallback to icon if available
                 if (request.destination === 'image') {
-                    return caches.match('/icon.png');
+                    return caches.match('./icon.png') || caches.match('/icon.png');
                 }
             });
         })

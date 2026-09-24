@@ -1,9 +1,12 @@
-const CACHE_NAME = 'jami-wood-offline-v4';
+const CACHE_NAME = 'jami-wood-offline-v5';
 const PRECACHE_URLS = [
     '/',
     '/index.html',
     '/manifest.json',
     '/icon.png',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/apple-touch-icon.png',
     'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap'
 ];
 

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>জমি ও কাঠ পরিমাপ</title>
+    <meta name="description" content="জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
+    <meta property="og:title" content="জমি ও কাঠ পরিমাপ">
+    <meta property="og:description" content="জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
     
     <!-- PWA ও আইকন লিংক -->
     <link rel="manifest" href="manifest.json">
@@ -15,193 +18,716 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* ওভারস্ক্রল বন্ধ করে এজ-টু-এজ ফুল স্ক্রিন ডিজাইন */
-        html, body {
-            font-family: 'Noto Sans Bengali', sans-serif;
-            background: #eef2f5; 
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0; /* অতিরিক্ত ফাঁকা জায়গা বাদ দেওয়া হলো */
+        /* --- Global Reset & Full-Screen Architecture --- */
+        * {
             box-sizing: border-box;
-            color: #334155;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            font-family: 'Noto Sans Bengali', system-ui, -apple-system, 'Segoe UI', Roboto, 'SolaimanLipi', sans-serif;
+            background: #f1f5f9; 
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #1e293b;
+            overflow-x: hidden;
             overscroll-behavior-y: none; 
         }
         
         .app-container {
-            background-color: #ffffff;
+            background-color: #f8fafc;
             width: 100%;
-            max-width: 500px;
+            max-width: 100%;
             min-height: 100vh; 
+            min-height: 100dvh;
             position: relative;
             box-shadow: none;
             display: flex;
             flex-direction: column;
-            margin: 0 auto;
+            margin: 0;
         }
 
-        /* --- প্রফেশনাল অ্যাপ হেডার --- */
+        /* --- প্রফেশনাল ফুল-স্ক্রিন অ্যাপ হেডার --- */
         .app-header {
-            background: linear-gradient(135deg, #123e6d 0%, #1e5a9c 100%);
+            background: linear-gradient(135deg, #0b223c 0%, #123e6d 52%, #1e5a9c 100%);
             color: #ffffff;
-            padding: 30px 20px 35px 20px;
+            padding: 40px 20px 45px 20px;
             text-align: center;
-            border-bottom-left-radius: 35px;
-            border-bottom-right-radius: 35px;
-            box-shadow: 0 4px 15px rgba(18, 62, 109, 0.2);
-            margin-bottom: 25px;
+            border-bottom-left-radius: 36px;
+            border-bottom-right-radius: 36px;
+            box-shadow: 0 10px 25px -5px rgba(18, 62, 109, 0.35);
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
         }
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            left: -60px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header-logo-badge {
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            margin-bottom: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.85);
+            animation: floatLogo 3.5s ease-in-out infinite alternate;
+        }
+        .header-logo-badge img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
         .app-header h2 {
             margin: 0;
-            font-size: 26px;
-            font-weight: 700;
+            font-size: 28px;
+            font-weight: 800;
             letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
         .app-header p {
-            margin: 8px 0 0 0;
-            font-size: 14px;
-            opacity: 0.85;
+            margin: 8px 0 16px 0;
+            font-size: 15px;
+            opacity: 0.92;
+            font-weight: 400;
+            max-width: 500px;
         }
 
-        /* --- ড্যাশবোর্ড গ্রিড (মেনু) --- */
+        /* Status Pill & In-App PWA Button */
+        .header-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 4px;
+        }
+        .offline-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #10b981;
+            display: inline-block;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.6);
+            animation: pulseDot 2s infinite;
+        }
+        .pulse-dot.offline {
+            background-color: #f59e0b;
+            box-shadow: 0 0 0 rgba(245, 158, 11, 0.6);
+        }
+
+        .pwa-install-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: gentleWiggle 5s ease-in-out infinite;
+        }
+        .pwa-install-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
+        }
+        .pwa-install-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* --- ১ম পেজ (ড্যাশবোর্ড মেনু): সম্পূর্ণ ফুল স্ক্রিন --- */
         #screen_menu.active {
             flex: 1;
             display: flex;
             flex-direction: column;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: linear-gradient(180deg, #f0f4f9 0%, #f8fafc 100%);
+            animation: screenFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
+        .dashboard-grid-wrapper {
+            flex: 1;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px 45px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
-            padding: 10px 25px 30px 25px;
-            align-content: start;
-            flex: 1;
+            width: 100%;
         }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            .dashboard-grid-wrapper {
+                padding: 16px 12px 35px 12px;
+            }
+        }
+
+        /* --- আধুনিক এনিমেটেড কার্ডস --- */
         .dash-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 40px 10px; /* কার্ড আরও বড় করা হলো */
+            border-radius: 22px;
+            padding: 28px 14px;
             text-align: center;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: 0.2s ease;
-        }
-        .dash-card:active {
-            background: #f8fafc;
-            transform: scale(0.97);
-        }
-        .dash-icon {
-            font-size: 65px; /* আইকন সাইজ বড় করা হলো */
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-        .dash-title {
-            font-size: 18px; /* টেক্সট সাইজ বড় করা হলো */
-            font-weight: 700;
-            color: #1e293b;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+            transform-origin: center center;
         }
 
-        /* --- সাব-স্ক্রিন টপ বার --- */
-        .top-bar {
-            background: #123e6d;
-            color: #ffffff;
-            padding: 20px 15px 15px 15px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
+        .dash-card:nth-child(1) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both; }
+        .dash-card:nth-child(2) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.10s both; }
+        .dash-card:nth-child(3) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
+        .dash-card:nth-child(4) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+
+        .dash-card::before {
+            content: '';
+            position: absolute;
             top: 0;
-            z-index: 10;
-        }
-        .back-btn {
+            left: 0;
+            right: 0;
+            height: 4px;
             background: transparent;
-            color: #ffffff;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 15px;
-            padding: 0;
+            transition: background 0.3s ease;
+        }
+
+        .dash-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 35px -10px rgba(18, 62, 109, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+            border-color: #93c5fd;
+        }
+        .dash-card:active {
+            transform: scale(0.96);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .dash-card.card-jami::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .dash-card.card-nol::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .dash-card.card-mati::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .dash-card.card-wood::before { background: linear-gradient(90deg, #10b981, #34d399); }
+
+        .dash-icon-wrapper {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 14px;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
         }
-        .screen-title { font-size: 19px; font-weight: 600; margin: 0; }
+
+        .card-jami .dash-icon-wrapper { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); color: #2563eb; }
+        .card-nol .dash-icon-wrapper { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); color: #7c3aed; }
+        .card-mati .dash-icon-wrapper { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); color: #d97706; }
+        .card-wood .dash-icon-wrapper { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); color: #059669; }
+
+        .dash-card:hover .dash-icon-wrapper {
+            transform: scale(1.15) rotate(-4deg);
+        }
+
+        .dash-icon {
+            font-size: 38px;
+            line-height: 1;
+            display: inline-block;
+        }
+        .dash-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
+        }
+        .dash-desc {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+        .dash-action-hint {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #123e6d;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.9;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        .dash-card:hover .dash-action-hint {
+            transform: translateX(3px);
+            opacity: 1;
+        }
+
+        .offline-banner-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 22px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            animation: screenFadeIn 0.6s ease 0.25s both;
+        }
+        .offline-banner-icon {
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+        .offline-banner-text {
+            font-size: 13px;
+            color: #475569;
+            line-height: 1.5;
+        }
+        .offline-banner-text strong {
+            color: #0f172a;
+        }
+
+        /* --- সাব-স্ক্রিন টপ বার (Sticky & Modern) --- */
+        .top-bar {
+            background: linear-gradient(135deg, #0d3159 0%, #123e6d 100%);
+            color: #ffffff;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 18px rgba(18, 62, 109, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 20px;
+            cursor: pointer;
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-2px);
+        }
+        .back-btn:active {
+            transform: scale(0.92);
+        }
+        .screen-title { 
+            font-size: 20px; 
+            font-weight: 700; 
+            margin: 0; 
+            letter-spacing: 0.3px; 
+        }
 
         .content-area {
-            padding: 15px 20px 40px 20px; /* ভেতরের প্যাডিং অপটিমাইজ করা হলো */
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 20px 20px 50px 20px;
             flex: 1;
+            box-sizing: border-box;
+            animation: screenSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         /* Screen Management */
         .screen, .tab-content { display: none; }
-        .screen.active, .tab-content.active { display: block; animation: fadeIn 0.3s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .screen.active, .tab-content.active { display: block; }
 
-        /* Modern Tabs */
-        .tabs { display: flex; background-color: #f1f5f9; padding: 6px; border-radius: 12px; margin-bottom: 18px; }
-        .tab-btn { flex: 1; padding: 12px 5px; background: transparent; border: none; font-size: 14.5px; font-weight: 600; font-family: inherit; color: #64748b; cursor: pointer; border-radius: 8px; white-space: nowrap; transition: 0.3s; }
-        .tab-btn.active { background-color: #ffffff; color: #123e6d; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        /* Modern Animated Tabs */
+        .tabs { 
+            display: flex; 
+            background-color: #e2e8f0; 
+            padding: 5px; 
+            border-radius: 14px; 
+            margin-bottom: 20px; 
+            position: relative;
+        }
+        .tab-btn { 
+            flex: 1; 
+            padding: 12px 5px; 
+            background: transparent; 
+            border: none; 
+            font-size: 14.5px; 
+            font-weight: 600; 
+            font-family: inherit; 
+            color: #475569; 
+            cursor: pointer; 
+            border-radius: 10px; 
+            white-space: nowrap; 
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .tab-btn:hover {
+            color: #0f172a;
+        }
+        .tab-btn.active { 
+            background-color: #ffffff; 
+            color: #123e6d; 
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+        }
 
         /* Labels adjusted to bring content up */
-        label { display: block; margin: 5px 0 8px 0; font-weight: 700; color: #1e293b; font-size: 15px; }
+        label { display: block; margin: 6px 0 8px 0; font-weight: 700; color: #1e293b; font-size: 15px; }
         
         .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 15px; }
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 15px; }
         
-        .measurement-card { background-color: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 15px 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); margin-bottom: 15px; position: relative; }
-        .measurement-title { font-size: 14.5px; font-weight: 700; color: #1e5a9c; margin-bottom: 12px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .measurement-card { 
+            background-color: #ffffff; 
+            border: 1.5px solid #cbd5e1; 
+            border-radius: 14px; 
+            padding: 16px 14px; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02); 
+            margin-bottom: 15px; 
+            position: relative; 
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .measurement-card:focus-within {
+            border-color: #93c5fd;
+            box-shadow: 0 4px 14px rgba(18, 62, 109, 0.08);
+        }
+        .measurement-title { 
+            font-size: 14.5px; 
+            font-weight: 700; 
+            color: #1e5a9c; 
+            margin-bottom: 12px; 
+            border-bottom: 1px dashed #e2e8f0; 
+            padding-bottom: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         .inner-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
         .input-col { display: flex; flex-direction: column; }
-        .input-label { font-size: 13px; color: #64748b; margin-bottom: 5px; font-weight: 600; text-align: left; padding-left: 2px; width: 100%; display: block; white-space: nowrap; }
+        .input-label { 
+            font-size: 13px; 
+            color: #64748b; 
+            margin-bottom: 5px; 
+            font-weight: 600; 
+            text-align: left; 
+            padding-left: 2px; 
+            width: 100%; 
+            display: block; 
+            white-space: nowrap; 
+        }
 
-        select, input { width: 100%; padding: 12px 8px; border: 1.5px solid #e2e8f0; background-color: #f8fafc; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: inherit; color: #0f172a; outline: none; text-align: center; transition: 0.2s; }
-        select:focus, input:focus { border-color: #123e6d; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(18, 62, 109, 0.1); }
+        select, input { 
+            width: 100%; 
+            padding: 12px 8px; 
+            border: 1.5px solid #e2e8f0; 
+            background-color: #f8fafc; 
+            border-radius: 10px; 
+            box-sizing: border-box; 
+            font-size: 16px; 
+            font-family: inherit; 
+            color: #0f172a; 
+            outline: none; 
+            text-align: center; 
+            transition: all 0.2s ease; 
+        }
+        select:focus, input:focus { 
+            border-color: #123e6d; 
+            background-color: #ffffff; 
+            box-shadow: 0 0 0 3px rgba(18, 62, 109, 0.12); 
+        }
 
-        .mati-section { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+        .mati-section { 
+            background: #ffffff; 
+            padding: 16px; 
+            border-radius: 14px; 
+            margin-bottom: 16px; 
+            border: 1px solid #e2e8f0; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
         .mati-section > label { margin-top: 0; margin-bottom: 12px; display: block; font-size: 15px; color: #123e6d; }
         
-        .add-btn { background: transparent; color: #123e6d; border: 2px dashed #94a3b8; padding: 12px; border-radius: 10px; font-size: 14.5px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 5px; margin-bottom: 15px; }
-        .add-btn:active { background: #e2e8f0; }
-        .remove-btn { background: #fee2e2; color: #ef4444; border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .add-btn { 
+            background: #f8fafc; 
+            color: #123e6d; 
+            border: 2px dashed #94a3b8; 
+            padding: 12px; 
+            border-radius: 12px; 
+            font-size: 14.5px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            font-family: inherit; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            width: 100%; 
+            margin-top: 6px; 
+            margin-bottom: 15px; 
+            transition: all 0.2s ease;
+        }
+        .add-btn:hover { background: #eff6ff; border-color: #3b82f6; }
+        .add-btn:active { transform: scale(0.98); }
+        .remove-btn { 
+            background: #fee2e2; 
+            color: #ef4444; 
+            border: none; 
+            border-radius: 6px; 
+            padding: 5px 12px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+        }
+        .remove-btn:hover { background: #fecaca; }
 
         .grid-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; margin-bottom: 20px;}
         .grid-buttons-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
         
-        button.action-btn { padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-family: inherit; cursor: pointer; font-weight: 700; }
+        button.action-btn { 
+            padding: 14px; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-family: inherit; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        button.action-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+        button.action-btn:active {
+            transform: scale(0.97);
+        }
         
-        .btn-calc { background-color: #123e6d; color: white; box-shadow: 0 4px 12px rgba(18, 62, 109, 0.2); }
-        .btn-clear { background-color: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); }
-        .btn-report { background-color: #10b981; color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); width:100%; margin-top:15px;}
+        .btn-calc { 
+            background: linear-gradient(135deg, #123e6d 0%, #1e5a9c 100%); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(18, 62, 109, 0.3); 
+        }
+        .btn-calc:hover {
+            box-shadow: 0 8px 20px rgba(18, 62, 109, 0.4);
+        }
+        .btn-clear { 
+            background-color: #ef4444; 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); 
+        }
+        .btn-report { 
+            background-color: #10b981; 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); 
+            width:100%; 
+            margin-top:15px;
+        }
         .btn-copy { background-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
         .btn-share { background-color: #f59e0b; color: white; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
         .btn-print { background-color: #1e293b; color: white; box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2); }
         
-        .result-box { margin-top: 25px; padding: 20px; background: #f8fafc; border-radius: 12px; text-align: center; display: none; border: 1px solid #e2e8f0; }
-        .highlight-result { font-size: 22px; font-weight: 700; margin-top: 10px; color: #123e6d; display: inline-block; }
-        .mixed-result { font-size: 16px; font-weight: 600; color: #f59e0b; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #cbd5e1; }
+        /* Modern Result Box with Pop-in Animation */
+        .result-box { 
+            margin-top: 25px; 
+            padding: 24px; 
+            background: #ffffff; 
+            border-radius: 18px; 
+            text-align: center; 
+            display: none; 
+            border: 1.5px solid #cbd5e1; 
+            box-shadow: 0 8px 25px -4px rgba(18, 62, 109, 0.12);
+            animation: popInBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .highlight-result { 
+            font-size: 24px; 
+            font-weight: 800; 
+            margin-top: 10px; 
+            color: #123e6d; 
+            display: inline-block; 
+        }
+        .mixed-result { 
+            font-size: 16.5px; 
+            font-weight: 700; 
+            color: #d97706; 
+            margin-top: 15px; 
+            padding-top: 14px; 
+            border-top: 1.5px dashed #cbd5e1; 
+        }
 
         /* Report Table Styling */
-        .report-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; background: #fff; }
+        .report-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 12px; 
+            font-size: 13.5px; 
+            background: #fff; 
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
         .report-table th, .report-table td { border: 1px solid #cbd5e1; padding: 10px 5px; text-align: center; }
         .report-table th { background-color: #e2e8f0; color: #1e293b; font-weight: 700; }
         .report-table tfoot td { font-weight: 700; color: #1e5a9c; font-size: 14.5px; }
 
-        /* --- Print Styles (Dedicated Container Approach) --- */
+        /* Keyframe Animations */
+        @keyframes screenFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes cardEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(22px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes screenSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes popInBounce {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(14px);
+            }
+            65% {
+                transform: scale(1.02) translateY(-2px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        @keyframes floatLogo {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-6px); }
+        }
+        @keyframes pulseDot {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        @keyframes gentleWiggle {
+            0%, 90%, 100% { transform: rotate(0deg); }
+            92% { transform: rotate(-3deg); }
+            94% { transform: rotate(3deg); }
+            96% { transform: rotate(-2deg); }
+            98% { transform: rotate(2deg); }
+        }
+
+        /* --- Print Styles --- */
         #print_container { display: none; background: white; padding: 20px; width: 100%; color: black; }
         
         @media print {
             body { background: white !important; margin: 0 !important; padding: 0 !important; }
-            .app-container { display: none !important; } /* Hide entire app during print */
-            #print_container { display: block !important; } /* Show ONLY the print container */
+            .app-container { display: none !important; }
+            #print_container { display: block !important; }
             
             .print-header { display: block !important; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
             .print-header h2 { margin: 0; font-size: 24px; color: #000; font-weight: bold; }
@@ -219,30 +745,72 @@
     <div class="app-container">
         
         <!-- ==========================================
-             মেইন মেনু (হোম স্ক্রিন)
+             মেইন মেনু (হোম স্ক্রিন - ১০০% ফুল স্ক্রিন)
              ========================================== -->
         <div id="screen_menu" class="screen active no-print">
             <div class="app-header">
-                <h2>জমি ও কাঠ পরিমাপ</h2>
-                <p>নির্ভুল হিসাবের ডিজিটাল মাধ্যম</p>
+                <div class="header-content">
+                    <div class="header-logo-badge">
+                        <img src="icon.png" alt="App Icon">
+                    </div>
+                    <h2>জমি ও কাঠ পরিমাপ</h2>
+                    <p>নির্ভুল হিসাবের ডিজিটাল ক্যালকুলেটর (সম্পূর্ণ অফলাইন)</p>
+
+                    <div class="header-badges-row">
+                        <div id="offline_status_pill" class="offline-status-pill">
+                            <span class="pulse-dot"></span> সম্পূর্ণ অফলাইন প্রস্তুত
+                        </div>
+                        <button id="pwa_install_btn" class="pwa-install-btn" onclick="handleInstallClick()">
+                            <span>📲</span> অ্যাপ ইনস্টল করুন
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="dash-card" onclick="openScreen('screen_hisab')">
-                    <span class="dash-icon">📏</span>
-                    <span class="dash-title">জমির হিসাব</span>
+            <div class="dashboard-grid-wrapper">
+                <div class="dashboard-grid">
+                    <div class="dash-card card-jami" onclick="openScreen('screen_hisab')">
+                        <div class="dash-icon-wrapper">
+                            <span class="dash-icon">📐</span>
+                        </div>
+                        <span class="dash-title">জমির হিসাব</span>
+                        <span class="dash-desc">৪-কোণা, ত্রিভুজ ও শতক/কাঠা</span>
+                        <span class="dash-action-hint">হিসাব করুন ➔</span>
+                    </div>
+
+                    <div class="dash-card card-nol" onclick="openScreen('screen_nol')">
+                        <div class="dash-icon-wrapper">
+                            <span class="dash-icon">📏</span>
+                        </div>
+                        <span class="dash-title">নল এর হিসাব</span>
+                        <span class="dash-desc">নল, হাত, বিঘাত ও আঙুল</span>
+                        <span class="dash-action-hint">হিসাব করুন ➔</span>
+                    </div>
+
+                    <div class="dash-card card-mati" onclick="openScreen('screen_mati')">
+                        <div class="dash-icon-wrapper">
+                            <span class="dash-icon">🚜</span>
+                        </div>
+                        <span class="dash-title">মাটির হিসাব</span>
+                        <span class="dash-desc">গর্ত ও ভরাট মাটির CFT ও দর</span>
+                        <span class="dash-action-hint">হিসাব করুন ➔</span>
+                    </div>
+
+                    <div class="dash-card card-wood" onclick="openScreen('screen_wood')">
+                        <div class="dash-icon-wrapper">
+                            <span class="dash-icon">🪵</span>
+                        </div>
+                        <span class="dash-title">কাঠের হিসাব</span>
+                        <span class="dash-desc">গোল গুঁড়ি ও তক্তার মাপ ও দাম</span>
+                        <span class="dash-action-hint">হিসাব করুন ➔</span>
+                    </div>
                 </div>
-                <div class="dash-card" onclick="openScreen('screen_nol')">
-                    <span class="dash-icon">🦯</span>
-                    <span class="dash-title">নল এর হিসাব</span>
-                </div>
-                <div class="dash-card" onclick="openScreen('screen_mati')">
-                    <span class="dash-icon">🪨</span>
-                    <span class="dash-title">মাটির হিসাব</span>
-                </div>
-                <div class="dash-card" onclick="openScreen('screen_wood')">
-                    <span class="dash-icon">🌳</span>
-                    <span class="dash-title">কাঠের হিসাব</span>
+
+                <div class="offline-banner-box">
+                    <div class="offline-banner-icon">⚡</div>
+                    <div class="offline-banner-text">
+                        <strong>সম্পূর্ণ অফলাইন অ্যাপ:</strong> কোনো ইন্টারনেট বা ডাটা সংযোগ ছাড়াই যে কোনো সময় জমি, নল, মাটি ও কাঠের পরিমাপ এবং প্রিন্ট রিপোর্ট তৈরি করতে পারবেন।
+                    </div>
                 </div>
             </div>
         </div>
@@ -696,24 +1264,150 @@
         </div>
     </div>
 
+    <!-- iOS Install Guide Modal -->
+    <div id="ios_install_modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
+        <div style="background:#ffffff; border-radius:24px; max-width:400px; width:100%; padding:26px; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); animation:popInBounce 0.35s ease;">
+            <div style="font-size:42px; margin-bottom:12px;">📱</div>
+            <h3 style="margin:0 0 10px 0; font-size:20px; color:#0f172a; font-weight:800;">আইফোন / আইপ্যাডে ইনস্টল</h3>
+            <p style="font-size:14.5px; color:#475569; line-height:1.6; text-align:left; background:#f8fafc; padding:14px 16px; border-radius:14px; border:1px solid #e2e8f0; margin-bottom:18px;">
+                ১. Safari ব্রাউজারের নিচে <strong>শেয়ার আইকন (<span style="font-size:16px;">⎋</span>)</strong> চাপুন।<br>
+                ২. নিচের তালিকা থেকে <strong>'Add to Home Screen' (+ হোম স্ক্রিনে যোগ করুন)</strong> নির্বাচন করুন।
+            </p>
+            <button onclick="closeIOSModal()" style="width:100%; padding:14px; background:#123e6d; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:16px; cursor:pointer;">বুঝেছি</button>
+        </div>
+    </div>
+
+    <!-- Connectivity Toast Notification -->
+    <div id="connectivity_toast" style="display:none; position:fixed; bottom:25px; left:50%; transform:translateX(-50%); background:#0f172a; color:#ffffff; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; z-index:999998; box-shadow:0 10px 25px rgba(0,0,0,0.3); align-items:center; gap:10px; transition:opacity 0.3s ease; pointer-events:none;">
+        <span id="toast_icon" style="font-size:18px;">🌐</span>
+        <span id="toast_text">অনলাইন মোড</span>
+    </div>
+
     <script>
-        // Force update cache on load
-        if ('caches' in window) {
-            caches.keys().then(function(names) {
-                for (let name of names) {
-                    caches.delete(name);
+        // Safe alert fallback in iframe environments
+        (function() {
+            var nativeAlert = window.alert;
+            window.alert = function(msg) {
+                try {
+                    nativeAlert(msg);
+                } catch (e) {
+                    showToast(msg, '⚠️', 3500);
                 }
-            });
+            };
+        })();
+
+        // ================= OFFLINE & PWA MANAGEMENT =================
+        let deferredPrompt = null;
+        let toastTimeout = null;
+
+        function showToast(text, icon, duration) {
+            const toastEl = document.getElementById('connectivity_toast');
+            const toastIcon = document.getElementById('toast_icon');
+            const toastText = document.getElementById('toast_text');
+            if (!toastEl) return;
+            toastText.innerText = text;
+            toastIcon.innerText = icon || 'ℹ️';
+            toastEl.style.display = 'flex';
+            toastEl.style.opacity = '1';
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(function() {
+                toastEl.style.opacity = '0';
+                setTimeout(function() { toastEl.style.display = 'none'; }, 300);
+            }, duration || 3200);
         }
-        
-        // PWA Service Worker Registration
+
+        function updateOnlineStatus() {
+            const offlinePill = document.getElementById('offline_status_pill');
+            const isOnline = navigator.onLine;
+            if (offlinePill) {
+                if (isOnline) {
+                    offlinePill.innerHTML = '<span class="pulse-dot"></span> সম্পূর্ণ অফলাইন প্রস্তুত';
+                } else {
+                    offlinePill.innerHTML = '<span class="pulse-dot offline"></span> অফলাইনে চলছে (ইন্টারনেটহীন)';
+                    showToast('আপনি অফলাইনে আছেন — সমস্ত হিসাব ইন্টারনেট ছাড়াই সচল থাকবে!', '📴', 4500);
+                }
+            }
+        }
+
+        window.addEventListener('online', function() {
+            updateOnlineStatus();
+            showToast('ইন্টারনেট সংযোগ পুনরায় স্থাপিত হয়েছে', '🌐', 3000);
+        });
+
+        window.addEventListener('offline', function() {
+            updateOnlineStatus();
+        });
+
+        // Initialize online status on load
+        window.addEventListener('DOMContentLoaded', function() {
+            updateOnlineStatus();
+        });
+
+        // Detect Standalone Mode
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+            (window.navigator.standalone === true);
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const installBtn = document.getElementById('pwa_install_btn');
+            if (isStandalone && installBtn) {
+                installBtn.style.display = 'none';
+            }
+        });
+
+        // Handle beforeinstallprompt (Android / Chrome)
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            const installBtn = document.getElementById('pwa_install_btn');
+            if (installBtn && !isStandalone) {
+                installBtn.style.display = 'inline-flex';
+            }
+        });
+
+        window.addEventListener('appinstalled', function() {
+            deferredPrompt = null;
+            const installBtn = document.getElementById('pwa_install_btn');
+            if (installBtn) installBtn.style.display = 'none';
+            showToast('অ্যাপটি সফলভাবে ডিভাইসে ইনস্টল করা হয়েছে!', '🎉', 4000);
+        });
+
+        function handleInstallClick() {
+            const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+            if (isIOS) {
+                const modal = document.getElementById('ios_install_modal');
+                if (modal) modal.style.display = 'flex';
+                return;
+            }
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choice) {
+                    if (choice.outcome === 'accepted') {
+                        const installBtn = document.getElementById('pwa_install_btn');
+                        if (installBtn) installBtn.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                showToast('আপনার ব্রাউজার মেনু থেকে "Add to Home screen" নির্বাচন করুন।', '📱', 4000);
+            }
+        }
+
+        function closeIOSModal() {
+            const modal = document.getElementById('ios_install_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // Robust PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./service-worker.js').then(function(reg) {
-                    reg.update();
-                }).catch(function(err) {
-                    console.log(err);
-                });
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function(reg) {
+                        console.log('[PWA] Service Worker registered with scope:', reg.scope);
+                    })
+                    .catch(function(err) {
+                        console.warn('[PWA] Service Worker registration failed:', err);
+                    });
             });
         }
 

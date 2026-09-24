@@ -1,0 +1,8 @@
+{
+  "name": "জমি ও কাঠ পরিমাপ",
+  "description": "জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।",
+  "requestFramePermissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

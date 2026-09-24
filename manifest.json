@@ -1,16 +1,30 @@
 {
-  "name": "জমি পরিমাপ অ্যাপ",
-  "short_name": "জমি পরিমাপ",
-  "start_url": "./index.html",
+  "id": "/",
+  "name": "জমি ও কাঠ পরিমাপ - ক্যালকুলেটর",
+  "short_name": "জমি ও কাঠ",
+  "description": "সম্পূর্ণ অফলাইন জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f6f9",
+  "orientation": "portrait",
+  "background_color": "#123e6d",
   "theme_color": "#123e6d",
+  "categories": [
+    "utilities",
+    "productivity"
+  ],
   "icons": [
     {
-      "src": "icon.png",
-      "sizes": "any",
+      "src": "/icon.png",
+      "sizes": "192x192 512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

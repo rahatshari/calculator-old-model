@@ -1,51 +1,93 @@
-const CACHE_NAME = 'app-cache-v2';
-const urlsToCache = [
-    './',
-    './index.html',
-    './manifest.json',
-    './icon.png'
+const CACHE_NAME = 'jami-wood-offline-v3';
+const PRECACHE_URLS = [
+    '/',
+    '/index.html',
+    '/manifest.json',
+    '/icon.png',
+    'https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap'
 ];
 
-// ১. Install Event: বেসিক ফাইল ক্যাশ করা এবং skipWaiting ব্যবহার
+// 1. Install Event: Cache all critical assets
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-            return cache.addAll(urlsToCache);
+        caches.open(CACHE_NAME).then(async cache => {
+            // Cache local URLs
+            for (const url of PRECACHE_URLS) {
+                try {
+                    await cache.add(url);
+                } catch (err) {
+                    console.warn('[SW] Could not precache url:', url, err);
+                }
+            }
         })
     );
-    self.skipWaiting(); // নতুন সার্ভিস ওয়ার্কার ইনস্টল হওয়ামাত্রই এক্টিভ করবে
+    self.skipWaiting();
 });
 
-// ২. Activate Event: পুরানো ক্যাশ ডিলিট করা এবং clients.claim ব্যবহার
+// 2. Activate Event: Clean up previous caches and take control
 self.addEventListener('activate', event => {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then(keys => {
             return Promise.all(
-                cacheNames.map(cache => {
-                    if (cache !== CACHE_NAME) {
-                        return caches.delete(cache); // পুরানো ভার্সনের ক্যাশ মুছে ফেলবে
+                keys.map(key => {
+                    if (key !== CACHE_NAME) {
+                        return caches.delete(key);
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim())
     );
-    self.clients.claim(); // পেজ রিলোড ছাড়াই নতুন সার্ভিস ওয়ার্কারের নিয়ন্ত্রণ নেবে
 });
 
-// ৩. Fetch Event: Cache First স্ট্র্যাটেজি এবং ফলব্যাক
+// 3. Fetch Event: Offline-first with cache fallback
 self.addEventListener('fetch', event => {
+    const request = event.request;
+
+    // Ignore non-GET requests
+    if (request.method !== 'GET') return;
+
+    // Handle HTML navigations: Network First, fallback to Cache
+    if (request.mode === 'navigate' || (request.headers.get('accept') && request.headers.get('accept').includes('text/html'))) {
+        event.respondWith(
+            fetch(request)
+                .then(networkResponse => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        const responseClone = networkResponse.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
+                    }
+                    return networkResponse;
+                })
+                .catch(() => {
+                    return caches.match('/index.html')
+                        .then(cachedHtml => cachedHtml || caches.match('/'));
+                })
+        );
+        return;
+    }
+
+    // Handle static assets & external fonts: Cache First, fallback to Network
     event.respondWith(
-        caches.match(event.request).then(cachedResponse => {
-            // ক্যাশে ফাইল পাওয়া গেলে সেটি রিটার্ন করবে (Cache First)
+        caches.match(request).then(cachedResponse => {
             if (cachedResponse) {
+                // Fetch in background to update cache if online
+                fetch(request).then(networkResponse => {
+                    if (networkResponse && networkResponse.status === 200) {
+                        caches.open(CACHE_NAME).then(cache => cache.put(request, networkResponse));
+                    }
+                }).catch(() => {/* Ignore background fetch failures when offline */});
                 return cachedResponse;
             }
 
-            // ক্যাশে না থাকলে নেটওয়ার্ক থেকে ফাইল ফেচ করার চেষ্টা করবে
-            return fetch(event.request).catch(() => {
-                // ইন্টারনেট না থাকলে এবং রিকোয়েস্টটি কোনো পেজ নেভিগেশনের হলে ডিফল্ট index.html শো করবে
-                if (event.request.mode === 'navigate' || event.request.headers.get('accept').includes('text/html')) {
-                    return caches.match('./index.html');
+            return fetch(request).then(networkResponse => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(request, responseClone));
+                }
+                return networkResponse;
+            }).catch(() => {
+                // If offline and requesting an image, fallback to icon if available
+                if (request.destination === 'image') {
+                    return caches.match('/icon.png');
                 }
             });
         })

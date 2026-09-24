@@ -35,7 +35,13 @@
             box-sizing: border-box;
             color: #1e293b;
             overflow-x: hidden;
-            overscroll-behavior-y: none; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        button, .dash-card, .tab-btn, .action-btn {
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         .app-container {
@@ -202,7 +208,7 @@
             min-height: 100vh;
             min-height: 100dvh;
             background: linear-gradient(180deg, #f0f4f9 0%, #f8fafc 100%);
-            animation: screenFadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: screenFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dashboard-grid-wrapper {
@@ -261,10 +267,10 @@
             transform-origin: center center;
         }
 
-        .dash-card:nth-child(1) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both; }
-        .dash-card:nth-child(2) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.10s both; }
-        .dash-card:nth-child(3) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
-        .dash-card:nth-child(4) { animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+        .dash-card:nth-child(1) { animation: cardEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.02s backwards; }
+        .dash-card:nth-child(2) { animation: cardEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.06s backwards; }
+        .dash-card:nth-child(3) { animation: cardEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.10s backwards; }
+        .dash-card:nth-child(4) { animation: cardEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.14s backwards; }
 
         .dash-card::before {
             content: '';
@@ -278,8 +284,8 @@
         }
 
         .dash-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 35px -10px rgba(18, 62, 109, 0.18), 0 4px 12px rgba(0, 0, 0, 0.04);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 16px 30px -10px rgba(18, 62, 109, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
             border-color: #93c5fd;
         }
         .dash-card:active {
@@ -357,7 +363,7 @@
             gap: 14px;
             margin-top: 22px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            animation: screenFadeIn 0.6s ease 0.25s both;
+            animation: screenFadeIn 0.5s ease 0.15s backwards;
         }
         .offline-banner-icon {
             font-size: 26px;
@@ -372,13 +378,15 @@
             color: #0f172a;
         }
 
-        /* --- সাব-স্ক্রিন টপ বার (Sticky & Modern) --- */
+        /* --- সাব-স্ক্রিন টপ বার (স্মুথ, দ্রুত রেসপন্সিভ) --- */
         .top-bar {
             background: linear-gradient(135deg, #0d3159 0%, #123e6d 100%);
             color: #ffffff;
-            padding: 16px 20px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            gap: 10px;
             box-shadow: 0 4px 18px rgba(18, 62, 109, 0.2);
             position: sticky;
             top: 0;
@@ -388,32 +396,71 @@
             box-sizing: border-box;
         }
         .back-btn {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.18);
             color: #ffffff;
-            border: none;
-            width: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
             height: 40px;
+            padding: 0 14px;
             border-radius: 12px;
-            font-size: 20px;
+            font-size: 14.5px;
+            font-weight: 700;
             cursor: pointer;
-            margin-right: 14px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            gap: 6px;
+            font-family: inherit;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            flex-shrink: 0;
         }
         .back-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.3);
             transform: translateX(-2px);
         }
         .back-btn:active {
-            transform: scale(0.92);
+            transform: scale(0.94);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .home-btn {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            flex-shrink: 0;
+        }
+        .home-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .home-btn:active {
+            transform: scale(0.94);
+            background: rgba(255, 255, 255, 0.4);
         }
         .screen-title { 
-            font-size: 20px; 
+            font-size: 18px; 
             font-weight: 700; 
             margin: 0; 
-            letter-spacing: 0.3px; 
+            letter-spacing: 0.2px; 
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
         }
 
         .content-area {
@@ -423,7 +470,43 @@
             padding: 20px 20px 50px 20px;
             flex: 1;
             box-sizing: border-box;
-            animation: screenSlideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: screenSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* সাব-স্ক্রিন নিচে ফিরে যাওয়ার বাটন */
+        .bottom-nav-row {
+            margin-top: 32px;
+            padding-top: 18px;
+            border-top: 1.5px dashed #cbd5e1;
+            text-align: center;
+        }
+        .bottom-home-btn {
+            background: #ffffff;
+            color: #123e6d;
+            border: 1.5px solid #cbd5e1;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            touch-action: manipulation;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+        .bottom-home-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+        .bottom-home-btn:active {
+            transform: scale(0.97);
+            background: #e2e8f0;
         }
 
         /* Screen Management */
@@ -820,8 +903,11 @@
              ========================================== -->
         <div id="screen_hisab" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="goBackToMenu()">❮</button>
+                <button class="back-btn" onclick="goBackToMenu()" title="মেনুতে ফিরে যান">
+                    <span>❮</span> মেনু
+                </button>
                 <h3 class="screen-title">জমির হিসাব</h3>
+                <button class="home-btn" onclick="goBackToMenu()" title="হোমে ফিরুন">🏠</button>
             </div>
             
             <div class="content-area">
@@ -945,6 +1031,12 @@
                         <div id="req_h_side" class="highlight-result" style="color: #f07e26;"></div>
                     </div>
                 </div>
+
+                <div class="bottom-nav-row no-print">
+                    <button class="bottom-home-btn" onclick="goBackToMenu()">
+                        <span>❮</span> প্রধান মেনুতে ফিরে যান
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -953,8 +1045,11 @@
              ========================================== -->
         <div id="screen_nol" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="goBackToMenu()">❮</button>
+                <button class="back-btn" onclick="goBackToMenu()" title="মেনুতে ফিরে যান">
+                    <span>❮</span> মেনু
+                </button>
                 <h3 class="screen-title">নল এর হিসাব</h3>
+                <button class="home-btn" onclick="goBackToMenu()" title="হোমে ফিরুন">🏠</button>
             </div>
 
             <div class="content-area">
@@ -1042,6 +1137,12 @@
                         <div id="req_n_side" class="highlight-result" style="color: #f07e26; line-height: 1.5;"></div>
                     </div>
                 </div>
+
+                <div class="bottom-nav-row no-print">
+                    <button class="bottom-home-btn" onclick="goBackToMenu()">
+                        <span>❮</span> প্রধান মেনুতে ফিরে যান
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1050,8 +1151,11 @@
              ========================================== -->
         <div id="screen_mati" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="goBackToMenu()">❮</button>
+                <button class="back-btn" onclick="goBackToMenu()" title="মেনুতে ফিরে যান">
+                    <span>❮</span> মেনু
+                </button>
                 <h3 class="screen-title">মাটির হিসাব</h3>
+                <button class="home-btn" onclick="goBackToMenu()" title="হোমে ফিরুন">🏠</button>
             </div>
             
             <div class="content-area no-print">
@@ -1126,6 +1230,12 @@
                     <div style="color: #475569; font-size: 18px; font-weight: 600;">মোট মাটি: <span id="mati_total_cft" class="highlight-result"></span> বর্গফুট</div>
                     <div id="mati_price_container" style="color: #f07e26; font-size: 20px; font-weight: 700; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #cbd5e1; display:none;">মোট দাম: <span id="mati_total_price"></span> টাকা</div>
                 </div>
+
+                <div class="bottom-nav-row no-print">
+                    <button class="bottom-home-btn" onclick="goBackToMenu()">
+                        <span>❮</span> প্রধান মেনুতে ফিরে যান
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1134,8 +1244,11 @@
              ========================================== -->
         <div id="screen_wood" class="screen">
             <div class="top-bar no-print">
-                <button class="back-btn" onclick="goBackToMenu()">❮</button>
+                <button class="back-btn" onclick="goBackToMenu()" title="মেনুতে ফিরে যান">
+                    <span>❮</span> মেনু
+                </button>
                 <h3 class="screen-title">গাছ ও কাঠের হিসাব</h3>
+                <button class="home-btn" onclick="goBackToMenu()" title="হোমে ফিরুন">🏠</button>
             </div>
 
             <div class="content-area">
@@ -1260,12 +1373,18 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="bottom-nav-row no-print">
+                    <button class="bottom-home-btn" onclick="goBackToMenu()">
+                        <span>❮</span> প্রধান মেনুতে ফিরে যান
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- iOS Install Guide Modal -->
-    <div id="ios_install_modal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
+    <div id="ios_install_modal" onclick="if(event.target === this) closeIOSModal()" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); z-index:999999; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px);">
         <div style="background:#ffffff; border-radius:24px; max-width:400px; width:100%; padding:26px; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); animation:popInBounce 0.35s ease;">
             <div style="font-size:42px; margin-bottom:12px;">📱</div>
             <h3 style="margin:0 0 10px 0; font-size:20px; color:#0f172a; font-weight:800;">আইফোন / আইপ্যাডে ইনস্টল</h3>
@@ -1411,37 +1530,76 @@
             });
         }
 
-        // Back Button & History Management
-        window.addEventListener('DOMContentLoaded', function() {
-            history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname);
-        });
-
-        window.addEventListener('popstate', function(event) {
-            if (event.state && event.state.screen) {
-                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-                document.getElementById(event.state.screen).classList.add('active');
-            } else {
-                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-                document.getElementById('screen_menu').classList.add('active');
+        // ================= NAVIGATION ENGINE (BULLETPROOF & LOCK-FREE) =================
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(function(s) {
+                s.classList.remove('active');
+            });
+            const target = document.getElementById(screenId) || document.getElementById('screen_menu');
+            if (target) {
+                target.classList.add('active');
             }
-        });
-
-        function goBackToMenu() {
-            if (history.state && history.state.screen !== 'screen_menu') {
-                history.back();
-            } else {
-                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-                document.getElementById('screen_menu').classList.add('active');
-                history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname);
-            }
+            window.scrollTo(0, 0);
         }
 
         function openScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-            document.getElementById(screenId).classList.add('active');
-            window.scrollTo(0, 0); 
-            history.pushState({ screen: screenId }, '', '#' + screenId);
+            showScreen(screenId);
+            try {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState({ screen: screenId }, '', '#' + screenId);
+                } else {
+                    window.location.hash = screenId;
+                }
+            } catch (e) {
+                try { window.location.hash = screenId; } catch(err) {}
+            }
         }
+
+        function goBackToMenu() {
+            showScreen('screen_menu');
+            try {
+                if (window.location.hash && window.location.hash !== '') {
+                    window.history.back();
+                } else if (window.history && window.history.replaceState) {
+                    window.history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname + window.location.search);
+                }
+            } catch (e) {}
+        }
+
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.screen) {
+                showScreen(event.state.screen);
+            } else {
+                const currentHash = window.location.hash.replace('#', '');
+                if (currentHash && document.getElementById(currentHash)) {
+                    showScreen(currentHash);
+                } else {
+                    showScreen('screen_menu');
+                }
+            }
+        });
+
+        window.addEventListener('hashchange', function() {
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash && document.getElementById(currentHash)) {
+                showScreen(currentHash);
+            } else {
+                showScreen('screen_menu');
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash && document.getElementById(currentHash)) {
+                showScreen(currentHash);
+            } else {
+                showScreen('screen_menu');
+                try {
+                    window.history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname + window.location.search);
+                } catch(e) {}
+            }
+        });
 
         // --- JavaScript Based Print Function (100% Reliable for Mobile) ---
         function triggerPrint(elementId, titleText) {

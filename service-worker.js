@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jami-wood-offline-v7';
+const CACHE_NAME = 'jami-wood-offline-v8';
 const PRECACHE_URLS = [
     './',
     './index.html',

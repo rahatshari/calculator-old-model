@@ -60,6 +60,7 @@
             display: flex;
             flex-direction: column;
             margin: 0;
+            overflow-x: hidden;
         }
 
         /* --- প্রফেশনাল ফুল-স্ক্রিন অ্যাপ হেডার --- */
@@ -292,7 +293,6 @@
             min-height: 100vh;
             min-height: 100dvh;
             background: linear-gradient(180deg, #f0f4f9 0%, #f8fafc 100%);
-            animation: screenFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dashboard-grid-wrapper {
@@ -380,13 +380,14 @@
         }
 
         .dash-card:hover {
-            transform: translateY(-6px) scale(1.02);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 16px 30px -10px rgba(18, 62, 109, 0.16), 0 4px 12px rgba(0, 0, 0, 0.04);
             border-color: #93c5fd;
         }
         .dash-card:active {
-            transform: scale(0.96);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transform: scale(0.94) translateY(2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            transition: transform 0.1s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
 
         .dash-card.card-jami::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
@@ -605,9 +606,153 @@
             background: #e2e8f0;
         }
 
-        /* Screen Management */
-        .screen, .tab-content { display: none; }
-        .screen.active, .tab-content.active { display: block; }
+        /* ================= SCREEN TRANSITION ARCHITECTURE ================= */
+        .screen {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-color: #f8fafc;
+            box-sizing: border-box;
+            will-change: transform, opacity;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        /* Forward Exit (Current Screen sliding out to left) */
+        .screen-exit-forward {
+            display: block !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            z-index: 1;
+            pointer-events: none;
+            animation: animScreenExitForward 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+        @keyframes animScreenExitForward {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-40px) scale(0.96);
+            }
+        }
+
+        /* Forward Enter (Target Sub-screen sliding in from right) */
+        .screen-enter-forward {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            z-index: 2;
+            animation: animScreenEnterForward 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+        @keyframes animScreenEnterForward {
+            0% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.98);
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Backward Exit (Sub-screen sliding out to right when returning to menu) */
+        .screen-exit-backward {
+            display: block !important;
+            position: absolute !important;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            z-index: 2;
+            pointer-events: none;
+            animation: animScreenExitBackward 0.25s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+        @keyframes animScreenExitBackward {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.97);
+            }
+        }
+
+        /* Backward Enter (Home Menu sliding back in from left) */
+        .screen-enter-backward {
+            display: block !important;
+            position: relative !important;
+            width: 100% !important;
+            z-index: 1;
+            animation: animScreenEnterBackward 0.28s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+        @keyframes animScreenEnterBackward {
+            0% {
+                opacity: 0;
+                transform: translateX(-35px) scale(0.97);
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        /* Micro-animations inside screens during entrance */
+        .screen-enter-forward .top-bar {
+            animation: animTopBarSlide 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
+        }
+        @keyframes animTopBarSlide {
+            0% {
+                opacity: 0;
+                transform: translateY(-14px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .screen-enter-forward .content-area {
+            animation: animContentCascade 0.32s cubic-bezier(0.2, 0.9, 0.3, 1) 0.03s backwards;
+        }
+        @keyframes animContentCascade {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.99);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Animated Tab Transition */
+        .tab-content { display: none; }
+        .tab-content.active { 
+            display: block; 
+            animation: tabSlideIn 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+        @keyframes tabSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(12px) scale(0.985);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
         /* Modern Animated Tabs */
         .tabs { 
@@ -1074,7 +1219,8 @@
             border-color: #60a5fa;
         }
         .dash-history-card:active {
-            transform: scale(0.98);
+            transform: scale(0.96) translateY(2px);
+            transition: transform 0.1s cubic-bezier(0.2, 0.9, 0.3, 1);
         }
         .dash-history-left {
             display: flex;
@@ -2113,9 +2259,35 @@
 
                 <!-- Fix for "This app cannot be installed" error -->
                 <div style="margin-top:12px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px; font-size:12.5px; color:#1e40af; line-height:1.5;">
-                    <strong>⚠️ "This app cannot be installed" লেখা আসলে:</strong><br>
-                    মেনু থেকে <em>"Install app"</em> এর বদলে <strong>"Add to Home screen" (হোম স্ক্রিনে যোগ করুন)</strong> অপশনটি ব্যবহার করুন, অথবা <strong>Samsung Internet / Firefox</strong> ব্রাউজারে সাইটটি ওপেন করুন (সেখানে কোনো এরর ছাড়া ১ ক্লিকেই ইনস্টল হয়)।
+                    <strong>💡 সহজ ইনস্টল:</strong> ক্রোম মেনু (⋮) থেকে <strong>"Add to Home screen" (হোম স্ক্রিনে যোগ করুন)</strong> নির্বাচন করুন। এটি আপনার মোবাইলে সাধারণ অ্যাপের মতোই আইকন তৈরি করবে এবং সম্পূর্ণ অফলাইনে কাজ করবে।
                 </div>
+            </div>
+
+            <!-- Direct APK Download Section -->
+            <div style="background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:14px; padding:14px; margin-bottom:16px; text-align:left;">
+                <div style="font-weight:700; color:#166534; margin-bottom:6px; font-size:14.5px; display:flex; align-items:center; gap:6px;">
+                    <span>📦</span> আসল Android APK (.apk ফাইল) ডাউনলোড:
+                </div>
+                <p style="margin:4px 0 10px 0; font-size:13px; color:#14532d; line-height:1.5;">
+                    আপনি যদি মোবাইলে আলাদাভাবে <strong>.apk ফাইল</strong> ইনস্টল করে ব্যবহার করতে চান, নিচের বাটনে চাপুন:
+                </p>
+                <a href="https://www.pwabuilder.com?url=https%3A%2F%2Fais-pre-txfejlc23bx6iiaopwlr5g-620978928458.asia-east1.run.app" target="_blank" rel="noopener noreferrer" style="background:#16a34a; color:#fff; text-decoration:none; padding:11px 16px; border-radius:10px; font-size:13.5px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box; box-shadow:0 3px 10px rgba(22,163,74,0.3);">
+                    <span>⬇️</span> Android APK তৈরি ও ডাউনলোড (PWABuilder)
+                </a>
+                <div style="margin-top:8px; font-size:12px; color:#15803d; line-height:1.4;">
+                    ✓ লিংক ওপেন হলে <strong>"Package for Android"</strong> চাপলেই আপনার ফোনের জন্য অফিশিয়াল <strong>.apk</strong> ফাইল পেয়ে যাবেন।
+                </div>
+            </div>
+
+            <!-- Single Offline File Download -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px 14px; margin-bottom:16px; text-align:left; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div>
+                    <div style="font-weight:700; color:#0f172a; font-size:13px;">💾 অফলাইন সিঙ্গেল ফাইল (.html)</div>
+                    <div style="font-size:11.5px; color:#64748b;">নেট ছাড়া যেকোনো ব্রাউজারে চলবে</div>
+                </div>
+                <a href="/download-html" download="jami-wood-calculator.html" style="background:#0f172a; color:#fff; text-decoration:none; padding:7px 12px; border-radius:8px; font-size:12.5px; font-weight:700; flex-shrink:0;">
+                    ডাউনলোড ⬇️
+                </a>
             </div>
 
             <!-- iOS Safari Instructions -->
@@ -2302,24 +2474,95 @@
             });
         }
 
-        // ================= NAVIGATION ENGINE (BULLETPROOF & LOCK-FREE) =================
-        function showScreen(screenId) {
-            const screens = document.querySelectorAll('.screen');
-            screens.forEach(function(s) {
-                s.classList.remove('active');
-            });
+        // ================= NAVIGATION ENGINE (SMOOTH ANIMATED & BULLETPROOF) =================
+        let activeScreenId = 'screen_menu';
+        let screenTransitionTimer = null;
+
+        function showScreen(screenId, isBack) {
             const target = document.getElementById(screenId) || document.getElementById('screen_menu');
-            if (target) {
+            if (!target) return;
+            const targetId = target.id;
+
+            const currentScreen = document.querySelector('.screen.active');
+
+            // If same screen, just update UI if history
+            if (currentScreen === target) {
+                activeScreenId = targetId;
+                if (targetId === 'screen_history') updateHistoryUI();
+                return;
+            }
+
+            // Clear any pending transition timer
+            if (screenTransitionTimer) {
+                clearTimeout(screenTransitionTimer);
+                screenTransitionTimer = null;
+            }
+
+            // Clear any lingering transition classes on all screens
+            document.querySelectorAll('.screen').forEach(function(s) {
+                s.classList.remove('screen-exit-forward', 'screen-exit-backward', 'screen-enter-forward', 'screen-enter-backward');
+                s.style.top = '';
+            });
+
+            // Initial load or if no active screen yet
+            if (!currentScreen) {
+                document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
                 target.classList.add('active');
+                activeScreenId = targetId;
+                if (targetId === 'screen_history') updateHistoryUI();
+                window.scrollTo(0, 0);
+                return;
             }
-            if (screenId === 'screen_history') {
-                updateHistoryUI();
+
+            // Determine if this is a backward navigation (back to menu or explicit isBack)
+            const isGoingBack = (typeof isBack === 'boolean') ? isBack : (targetId === 'screen_menu');
+
+            // Capture scroll position of current screen to prevent visual jumping during exit animation
+            const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+            currentScreen.style.top = '-' + scrollY + 'px';
+
+            if (isGoingBack) {
+                currentScreen.classList.add('screen-exit-backward');
+                target.classList.add('active', 'screen-enter-backward');
+            } else {
+                currentScreen.classList.add('screen-exit-forward');
+                target.classList.add('active', 'screen-enter-forward');
             }
+
+            activeScreenId = targetId;
+            if (targetId === 'screen_history') updateHistoryUI();
+
+            // Reset window scroll for new screen
             window.scrollTo(0, 0);
+
+            // Re-trigger card entrance animations if returning to menu
+            if (targetId === 'screen_menu') {
+                const cards = target.querySelectorAll('.dash-card');
+                cards.forEach(function(card, idx) {
+                    card.style.animation = 'none';
+                    void card.offsetWidth;
+                    card.style.animation = 'cardEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) ' + (0.02 + idx * 0.04) + 's backwards';
+                });
+                const histCard = target.querySelector('.dash-history-card');
+                if (histCard) {
+                    histCard.style.animation = 'none';
+                    void histCard.offsetWidth;
+                    histCard.style.animation = 'screenSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.18s backwards';
+                }
+            }
+
+            screenTransitionTimer = setTimeout(function() {
+                if (currentScreen && currentScreen !== target) {
+                    currentScreen.classList.remove('active', 'screen-exit-forward', 'screen-exit-backward');
+                    currentScreen.style.top = '';
+                }
+                target.classList.remove('screen-enter-forward', 'screen-enter-backward');
+                screenTransitionTimer = null;
+            }, 300);
         }
 
         function openScreen(screenId) {
-            showScreen(screenId);
+            showScreen(screenId, false);
             try {
                 if (window.history && window.history.pushState) {
                     window.history.pushState({ screen: screenId }, '', '#' + screenId);
@@ -2332,7 +2575,7 @@
         }
 
         function goBackToMenu() {
-            showScreen('screen_menu');
+            showScreen('screen_menu', true);
             try {
                 if (window.history && window.history.replaceState) {
                     window.history.replaceState({ screen: 'screen_menu' }, '', window.location.pathname + window.location.search);
@@ -2346,13 +2589,14 @@
 
         window.addEventListener('popstate', function(event) {
             if (event.state && event.state.screen) {
-                showScreen(event.state.screen);
+                const isBack = (event.state.screen === 'screen_menu');
+                showScreen(event.state.screen, isBack);
             } else {
                 const currentHash = window.location.hash.replace('#', '');
                 if (currentHash && document.getElementById(currentHash)) {
-                    showScreen(currentHash);
+                    showScreen(currentHash, false);
                 } else {
-                    showScreen('screen_menu');
+                    showScreen('screen_menu', true);
                 }
             }
         });
@@ -2360,9 +2604,9 @@
         window.addEventListener('hashchange', function() {
             const currentHash = window.location.hash.replace('#', '');
             if (currentHash && document.getElementById(currentHash)) {
-                showScreen(currentHash);
+                showScreen(currentHash, false);
             } else {
-                showScreen('screen_menu');
+                showScreen('screen_menu', true);
             }
         });
 

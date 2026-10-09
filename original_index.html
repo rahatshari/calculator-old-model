@@ -249,26 +249,6 @@
             .dashboard-grid-wrapper {
                 padding: 16px 12px 35px 12px;
             }
-            .grid-4 {
-                gap: 4px;
-            }
-            .grid-4 input {
-                padding: 10px 2px;
-                font-size: 15px;
-            }
-            .grid-4 .input-label {
-                font-size: 12px;
-                text-align: center;
-            }
-            .grid-3 {
-                gap: 6px;
-            }
-            .grid-3 input {
-                padding: 10px 4px;
-            }
-            .measurement-card {
-                padding: 14px 10px;
-            }
         }
 
         /* --- আধুনিক এনিমেটেড কার্ডস --- */
@@ -605,19 +585,17 @@
         }
         .inner-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        .input-col { display: flex; flex-direction: column; min-width: 0; }
+        .input-col { display: flex; flex-direction: column; }
         .input-label { 
             font-size: 13px; 
             color: #64748b; 
             margin-bottom: 5px; 
             font-weight: 600; 
-            text-align: center; 
+            text-align: left; 
             padding-left: 2px; 
             width: 100%; 
             display: block; 
             white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         select, input { 
@@ -2843,159 +2821,6 @@
         function clearHisabRev() {
             document.querySelectorAll('#hisab_rev input').forEach(function(inp) { inp.value = ''; });
             document.getElementById('res_hisab_rev').style.display = 'none';
-        }
-
-        /* ---------------- নল এর হিসাব কোড ---------------- */
-        function calculateNolArea() {
-            let s_hat = parseFloat(document.getElementById('n_size_hat').value) || 0;
-            let s_bighat = parseFloat(document.getElementById('n_size_bighat').value) || 0;
-            let s_angul = parseFloat(document.getElementById('n_size_angul').value) || 0;
-            let oneNolInFeet = (s_hat * FT_PER_HAT) + (s_bighat * FT_PER_BIGHAT) + (s_angul * FT_PER_ANGUL);
-
-            if (oneNolInFeet <= 0) { 
-                alert('১ নলের মাপ সঠিকভাবে দিন।'); 
-                return; 
-            }
-
-            let l_nol = parseFloat(document.getElementById('n_l_nol').value) || 0;
-            let l_hat = parseFloat(document.getElementById('n_l_hat').value) || 0;
-            let l_bighat = parseFloat(document.getElementById('n_l_bighat').value) || 0;
-            let l_angul = parseFloat(document.getElementById('n_l_angul').value) || 0;
-
-            let w_nol = parseFloat(document.getElementById('n_w_nol').value) || 0;
-            let w_hat = parseFloat(document.getElementById('n_w_hat').value) || 0;
-            let w_bighat = parseFloat(document.getElementById('n_w_bighat').value) || 0;
-            let w_angul = parseFloat(document.getElementById('n_w_angul').value) || 0;
-
-            let lenFeet = (l_nol * oneNolInFeet) + (l_hat * FT_PER_HAT) + (l_bighat * FT_PER_BIGHAT) + (l_angul * FT_PER_ANGUL);
-            let widFeet = (w_nol * oneNolInFeet) + (w_hat * FT_PER_HAT) + (w_bighat * FT_PER_BIGHAT) + (w_angul * FT_PER_ANGUL);
-
-            if (lenFeet === 0 || widFeet === 0) { 
-                alert('দৈর্ঘ্য এবং প্রস্থের সঠিক মান দিন।'); 
-                return; 
-            }
-
-            let totalSqFeet = lenFeet * widFeet;
-            showAreaResult('res_nol_area', 'sqFt_n', 'shotok_n', 'mixed_n', totalSqFeet);
-
-            let totalShotok = totalSqFeet / SQ_FEET_PER_SHOTOK;
-            let totalKatha = totalShotok / 3.30;
-            let kuraCount = Math.floor(totalKatha / 20);
-            let kathaCount = Math.floor(totalKatha % 20);
-            let dhurCount = ((totalKatha % 20) - kathaCount) * 20;
-
-            let mixedText = 'মোট: ';
-            if (kuraCount > 0) mixedText += toBengaliNum(kuraCount.toString()) + ' কুড়া ';
-            if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount.toString()) + ' কাঠা ';
-            mixedText += toBengaliNum(dhurCount.toFixed(2)) + ' ধুর';
-
-            addHistoryRecord({
-                category: 'nol',
-                categoryName: 'নলের হিসাব (ক্ষেত্রফল)',
-                icon: '📏',
-                title: 'নল মাপে জমি পরিমাপ',
-                mainResult: toBengaliNum(totalShotok.toFixed(3)) + ' শতক',
-                subResult: toBengaliNum(totalSqFeet.toFixed(2)) + ' বর্গফুট | ' + mixedText,
-                inputs: [
-                    { label: '১ নল', val: toBengaliNum(s_hat.toString()) + ' হাত ' + toBengaliNum(s_bighat.toString()) + ' বিঘাত ' + toBengaliNum(s_angul.toString()) + ' আঙুল' },
-                    { label: 'দৈর্ঘ্য', val: toBengaliNum(l_nol.toString()) + ' নল ' + toBengaliNum(l_hat.toString()) + ' হাত ' + toBengaliNum(l_bighat.toString()) + ' বিঘাত ' + toBengaliNum(l_angul.toString()) + ' আঙুল' },
-                    { label: 'প্রস্থ', val: toBengaliNum(w_nol.toString()) + ' নল ' + toBengaliNum(w_hat.toString()) + ' হাত ' + toBengaliNum(w_bighat.toString()) + ' বিঘাত ' + toBengaliNum(w_angul.toString()) + ' আঙুল' }
-                ],
-                results: [
-                    { label: 'মোট ক্ষেত্রফল', val: toBengaliNum(totalSqFeet.toFixed(2)) + ' বর্গফুট' },
-                    { label: 'মোট শতক', val: toBengaliNum(totalShotok.toFixed(3)) + ' শতক' },
-                    { label: 'কাঠা/কুড়া/ধুর', val: mixedText }
-                ]
-            });
-        }
-
-        function clearNolArea() {
-            document.querySelectorAll('#nol_area input:not(#n_size_hat):not(#n_size_bighat):not(#n_size_angul)').forEach(function(inp) { 
-                inp.value = ''; 
-            });
-            document.getElementById('res_nol_area').style.display = 'none';
-        }
-
-        function calculateNolRev() {
-            let s_hat = parseFloat(document.getElementById('r_size_hat').value) || 0;
-            let s_bighat = parseFloat(document.getElementById('r_size_bighat').value) || 0;
-            let s_angul = parseFloat(document.getElementById('r_size_angul').value) || 0;
-            let oneNolInFeet = (s_hat * FT_PER_HAT) + (s_bighat * FT_PER_BIGHAT) + (s_angul * FT_PER_ANGUL);
-
-            if (oneNolInFeet <= 0) { 
-                alert('১ নলের মাপ সঠিকভাবে দিন।'); 
-                return; 
-            }
-
-            let targetArea = parseFloat(document.getElementById('r_target_area').value) || 0;
-            let unit = document.getElementById('r_area_unit').value;
-
-            let k_nol = parseFloat(document.getElementById('r_k_nol').value) || 0;
-            let k_hat = parseFloat(document.getElementById('r_k_hat').value) || 0;
-            let k_bighat = parseFloat(document.getElementById('r_k_bighat').value) || 0;
-            let k_angul = parseFloat(document.getElementById('r_k_angul').value) || 0;
-
-            let knownFeet = (k_nol * oneNolInFeet) + (k_hat * FT_PER_HAT) + (k_bighat * FT_PER_BIGHAT) + (k_angul * FT_PER_ANGUL);
-
-            if (targetArea <= 0 || knownFeet <= 0) { 
-                alert('জমির পরিমাণ এবং জানা দিকের মান দিন।'); 
-                return; 
-            }
-
-            let targetSqFt = targetArea * SQ_FEET_PER_SHOTOK;
-            if (unit === 'katha') targetSqFt *= 3.30;
-            else if (unit === 'kura') targetSqFt *= (3.30 * 20);
-
-            let reqFeet = targetSqFt / knownFeet;
-
-            let ansNol = Math.floor(reqFeet / oneNolInFeet);
-            let remFeet1 = reqFeet - (ansNol * oneNolInFeet);
-
-            let ansHat = Math.floor(remFeet1 / FT_PER_HAT);
-            let remFeet2 = remFeet1 - (ansHat * FT_PER_HAT);
-
-            let ansBighat = Math.floor(remFeet2 / FT_PER_BIGHAT);
-            let remFeet3 = remFeet2 - (ansBighat * FT_PER_BIGHAT);
-
-            let ansAngul = Math.round(remFeet3 / FT_PER_ANGUL);
-
-            let resText = 'অজানা দিকের মাপ লাগবে:<br>';
-            let parts = [];
-            if (ansNol > 0) parts.push(toBengaliNum(ansNol.toString()) + ' নল');
-            if (ansHat > 0) parts.push(toBengaliNum(ansHat.toString()) + ' হাত');
-            if (ansBighat > 0) parts.push(toBengaliNum(ansBighat.toString()) + ' বিঘাত');
-            if (ansAngul > 0) parts.push(toBengaliNum(ansAngul.toString()) + ' আঙুল');
-            if (parts.length === 0) parts.push('০ নল');
-
-            resText += parts.join(' ') + "<br><span style='font-size:14px; color:#475569; font-weight:500;'>মোট: " + toBengaliNum(reqFeet.toFixed(2)) + ' ফুট</span>';
-
-            document.getElementById('res_nol_rev').style.display = 'block';
-            document.getElementById('req_n_side').innerHTML = resText;
-
-            let unitName = unit === 'katha' ? 'কাঠা' : unit === 'kura' ? 'কুড়া' : 'শতক';
-            addHistoryRecord({
-                category: 'nol',
-                categoryName: 'নল প্রস্থ/দৈর্ঘ্য নির্ণয়',
-                icon: '📏',
-                title: 'নল রিভার্স পরিমাপ',
-                mainResult: parts.join(' '),
-                subResult: 'টার্গেট জমি: ' + toBengaliNum(targetArea.toString()) + ' ' + unitName + ', জানা দিক: ' + toBengaliNum(k_nol.toString()) + ' নল ' + toBengaliNum(k_hat.toString()) + ' হাত ' + toBengaliNum(k_bighat.toString()) + ' বিঘাত ' + toBengaliNum(k_angul.toString()) + ' আঙুল',
-                inputs: [
-                    { label: '১ নল', val: toBengaliNum(s_hat.toString()) + ' হাত ' + toBengaliNum(s_bighat.toString()) + ' বিঘাত ' + toBengaliNum(s_angul.toString()) + ' আঙুল' },
-                    { label: 'টার্গেট জমি', val: toBengaliNum(targetArea.toString()) + ' ' + unitName },
-                    { label: 'জানা দিকের মাপ', val: toBengaliNum(k_nol.toString()) + ' নল ' + toBengaliNum(k_hat.toString()) + ' হাত ' + toBengaliNum(k_bighat.toString()) + ' বিঘাত ' + toBengaliNum(k_angul.toString()) + ' আঙুল' }
-                ],
-                results: [
-                    { label: 'অজানা দিকের মাপ লাগবে', val: parts.join(' ') + ' (' + toBengaliNum(reqFeet.toFixed(2)) + ' ফুট)' }
-                ]
-            });
-        }
-
-        function clearNolRev() {
-            document.querySelectorAll('#nol_rev input:not(#r_size_hat):not(#r_size_bighat):not(#r_size_angul)').forEach(function(inp) { 
-                inp.value = ''; 
-            });
-            document.getElementById('res_nol_rev').style.display = 'none';
         }
 
         /* ---------------- মাটির হিসাব কোড ---------------- */

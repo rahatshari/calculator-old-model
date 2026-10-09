@@ -249,26 +249,6 @@
             .dashboard-grid-wrapper {
                 padding: 16px 12px 35px 12px;
             }
-            .grid-4 {
-                gap: 4px;
-            }
-            .grid-4 input {
-                padding: 10px 2px;
-                font-size: 15px;
-            }
-            .grid-4 .input-label {
-                font-size: 12px;
-                text-align: center;
-            }
-            .grid-3 {
-                gap: 6px;
-            }
-            .grid-3 input {
-                padding: 10px 4px;
-            }
-            .measurement-card {
-                padding: 14px 10px;
-            }
         }
 
         /* --- আধুনিক এনিমেটেড কার্ডস --- */
@@ -605,19 +585,17 @@
         }
         .inner-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-        .input-col { display: flex; flex-direction: column; min-width: 0; }
+        .input-col { display: flex; flex-direction: column; }
         .input-label { 
             font-size: 13px; 
             color: #64748b; 
             margin-bottom: 5px; 
             font-weight: 600; 
-            text-align: center; 
+            text-align: left; 
             padding-left: 2px; 
             width: 100%; 
             display: block; 
             white-space: nowrap; 
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         select, input { 
@@ -1322,12 +1300,9 @@
                         <img src="icon.png" alt="App Icon">
                     </div>
                     <h2>জমি ও কাঠ পরিমাপ</h2>
-                    <p>নির্ভুল হিসাবের ডিজিটাল ক্যালকুলেটর (সম্পূর্ণ অফলাইন)</p>
+                    <p>নির্ভুল হিসাবের ডিজিটাল ক্যালকুলেটর</p>
 
                     <div class="header-badges-row">
-                        <div id="offline_status_pill" class="offline-status-pill">
-                            <span class="pulse-dot"></span> সম্পূর্ণ অফলাইন প্রস্তুত
-                        </div>
                         <button class="header-history-btn" onclick="openScreen('screen_history')" title="হিসাবের হিস্ট্রি দেখুন">
                             <span>📋</span> হিস্ট্রি <span id="header_history_badge" class="header-history-badge">০</span>
                         </button>
@@ -1403,13 +1378,6 @@
                         </div>
                     </div>
                     <div class="dash-history-arrow">হিস্ট্রি দেখুন ➔</div>
-                </div>
-
-                <div class="offline-banner-box">
-                    <div class="offline-banner-icon">⚡</div>
-                    <div class="offline-banner-text">
-                        <strong>সম্পূর্ণ অফলাইন অ্যাপ:</strong> কোনো ইন্টারনেট বা ডাটা সংযোগ ছাড়াই যে কোনো সময় জমি, নল, মাটি ও কাঠের পরিমাপ এবং প্রিন্ট রিপোর্ট তৈরি করতে পারবেন।
-                    </div>
                 </div>
             </div>
         </div>
@@ -2055,21 +2023,11 @@
         }
 
         function updateOnlineStatus() {
-            const offlinePill = document.getElementById('offline_status_pill');
-            const isOnline = navigator.onLine;
-            if (offlinePill) {
-                if (isOnline) {
-                    offlinePill.innerHTML = '<span class="pulse-dot"></span> সম্পূর্ণ অফলাইন প্রস্তুত';
-                } else {
-                    offlinePill.innerHTML = '<span class="pulse-dot offline"></span> অফলাইনে চলছে (ইন্টারনেটহীন)';
-                    showToast('আপনি অফলাইনে আছেন — সমস্ত হিসাব ইন্টারনেট ছাড়াই সচল থাকবে!', '📴', 4500);
-                }
-            }
+            // Keep status update clean and silent
         }
 
         window.addEventListener('online', function() {
             updateOnlineStatus();
-            showToast('ইন্টারনেট সংযোগ পুনরায় স্থাপিত হয়েছে', '🌐', 3000);
         });
 
         window.addEventListener('offline', function() {
@@ -2348,7 +2306,7 @@
             };
             list.unshift(record);
             saveCalculationHistory(list);
-            showToast('হিসাবটি হিস্ট্রিতে সংরক্ষিত হয়েছে 💾', '✅', 2500);
+            // হিসাবটি স্বয়ংক্রিয়ভাবে ও নীরবে হিস্ট্রিতে সেভ হচ্ছে
         }
 
         function updateHistoryUI() {

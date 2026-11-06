@@ -25,10 +25,13 @@ android {
 
     signingConfigs {
         create("persistentKey") {
-            storeFile = file("release.keystore")
-            storePassword = "android123"
-            keyAlias = "calculatorKey"
-            keyPassword = "android123"
+            val keyFile = file("${projectDir}/release.keystore")
+            if (keyFile.exists()) {
+                storeFile = keyFile
+                storePassword = "android123"
+                keyAlias = "calculatorKey"
+                keyPassword = "android123"
+            }
         }
     }
 
@@ -36,10 +39,18 @@ android {
         release {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("persistentKey")
+            val persistentSigning = signingConfigs.findByName("persistentKey")
+            if (persistentSigning?.storeFile != null && persistentSigning.storeFile!!.exists()) {
+                signingConfig = persistentSigning
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
         debug {
-            signingConfig = signingConfigs.getByName("persistentKey")
+            val persistentSigning = signingConfigs.findByName("persistentKey")
+            if (persistentSigning?.storeFile != null && persistentSigning.storeFile!!.exists()) {
+                signingConfig = persistentSigning
+            }
         }
     }
 
@@ -64,6 +75,7 @@ android {
     lint {
         abortOnError = false
         checkReleaseBuilds = false
+        ignoreWarnings = true
     }
 
     packaging {

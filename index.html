@@ -204,6 +204,29 @@
             transform: scale(0.97);
         }
 
+        .header-update-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .header-update-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+        }
+        .header-update-btn:active {
+            transform: scale(0.97);
+        }
+
         /* --- ১ম পেজ (ড্যাশবোর্ড মেনু): সম্পূর্ণ ফুল স্ক্রিন --- */
         #screen_menu.active {
             flex: 1;
@@ -1309,8 +1332,8 @@
                         <button class="header-history-btn" onclick="openScreen('screen_history')" title="হিসাবের হিস্ট্রি দেখুন">
                             <span>📋</span> হিস্ট্রি <span id="header_history_badge" class="header-history-badge">০</span>
                         </button>
-                        <button id="pwa_install_btn" class="pwa-install-btn" onclick="handleInstallClick()">
-                            <span>📲</span> অ্যাপ ইনস্টল করুন
+                        <button id="app_update_btn" class="header-update-btn" onclick="checkAppUpdate(true)" title="নতুন সংস্করণ চেক করুন">
+                            <span>🔄</span> আপডেট
                         </button>
                     </div>
                 </div>
@@ -1990,6 +2013,38 @@
             <button onclick="closeInstallGuideModal()" style="width:100%; padding:13px; background:#123e6d; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;">
                 বুঝেছি / বন্ধ করুন
             </button>
+    </div>
+
+    <!-- In-App Auto Update Modal Dialog -->
+    <div id="app_update_modal" onclick="if(event.target === this) closeUpdateModal()" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); backdrop-filter:blur(5px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#ffffff; border-radius:24px; max-width:440px; width:100%; padding:24px 22px; text-align:left; box-shadow:0 25px 50px -12px rgba(0,0,0,0.3); animation:popInBounce 0.35s ease; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div id="update_modal_icon" style="width:42px; height:42px; border-radius:12px; background:#eff6ff; display:flex; align-items:center; justify-content:center; font-size:22px;">🔄</div>
+                    <h3 id="update_modal_title" style="margin:0; font-size:18px; color:#123e6d; font-weight:800;">অ্যাপ আপডেট</h3>
+                </div>
+                <button onclick="closeUpdateModal()" style="background:none; border:none; font-size:20px; color:#64748b; cursor:pointer; padding:4px;">✕</button>
+            </div>
+            
+            <div id="update_modal_body" style="font-size:14px; color:#334155; line-height:1.6; margin-bottom:20px;">
+                <!-- Dynamically populated content -->
+            </div>
+
+            <div id="update_progress_container" style="display:none; margin-bottom:16px;">
+                <div style="width:100%; height:8px; background:#e2e8f0; border-radius:4px; overflow:hidden;">
+                    <div id="update_progress_bar" style="width:100%; height:100%; background:#2563eb;"></div>
+                </div>
+                <div id="update_progress_text" style="font-size:12.5px; color:#2563eb; margin-top:6px; font-weight:600; text-align:center;">ডাউনলোড হচ্ছে...</div>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button id="update_dismiss_btn" onclick="closeUpdateModal()" style="padding:10px 18px; background:#f1f5f9; border:none; border-radius:12px; color:#475569; font-weight:700; font-size:14px; cursor:pointer;">
+                    বন্ধ করুন
+                </button>
+                <button id="update_action_btn" onclick="startAppUpdate()" style="display:none; padding:10px 22px; background:#15803d; border:none; border-radius:12px; color:#ffffff; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 4px 12px rgba(21,128,61,0.3);">
+                    এখনই আপডেট করুন ➔
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2054,51 +2109,172 @@
             updateOnlineStatus();
         });
 
-        // Detect Standalone Mode
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-            (window.navigator.standalone === true);
+        // ================= IN-APP AUTO-UPDATE & PLATFORM LOGIC =================
+        const CURRENT_APP_VERSION = (window.AndroidBridge && window.AndroidBridge.getAppVersion) ? window.AndroidBridge.getAppVersion() : "1.0.0";
+        let latestReleaseInfo = null;
 
+        function isAppRunningStandalone() {
+            if (window.AndroidBridge && window.AndroidBridge.isNativeApp && window.AndroidBridge.isNativeApp()) return true;
+            if (window.matchMedia('(display-mode: standalone)').matches) return true;
+            if (window.navigator.standalone === true) return true;
+            return false;
+        }
+
+        // Clean UI: Always hide install button if inside app or standalone
         window.addEventListener('DOMContentLoaded', function() {
             const installBtn = document.getElementById('pwa_install_btn');
-            if (isStandalone && installBtn) {
-                installBtn.style.display = 'none';
+            if (installBtn) {
+                installBtn.style.display = 'none'; // Inside the app, install button is not needed
             }
+            // Silent check for updates if connected to internet after 3 seconds
+            setTimeout(function() {
+                if (navigator.onLine) {
+                    checkAppUpdate(false);
+                }
+            }, 3000);
         });
 
-        // Handle beforeinstallprompt (Android / Chrome)
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('pwa_install_btn');
-            if (installBtn && !isStandalone) {
-                installBtn.style.display = 'inline-flex';
+        // In-app auto-update checking logic (GitHub Releases API)
+        async function checkAppUpdate(isManual) {
+            const repo = localStorage.getItem('github_repo') || 'rahatshari/calculator-old-model';
+            if (isManual) {
+                showToast('আপডেট চেক করা হচ্ছে...', '🔄', 2000);
             }
-        });
-
-        window.addEventListener('appinstalled', function() {
-            deferredPrompt = null;
-            const installBtn = document.getElementById('pwa_install_btn');
-            if (installBtn) installBtn.style.display = 'none';
-            showToast('অ্যাপটি সফলভাবে ডিভাইসে ইনস্টল করা হয়েছে!', '🎉', 4000);
-        });
-
-        function handleInstallClick() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function(choice) {
-                    if (choice.outcome === 'accepted') {
-                        const installBtn = document.getElementById('pwa_install_btn');
-                        if (installBtn) installBtn.style.display = 'none';
-                        showToast('অ্যাপটি ইনস্টল হচ্ছে...', '🎉', 3500);
-                    }
-                    deferredPrompt = null;
-                }).catch(function() {
-                    openInstallGuideModal();
+            try {
+                const resp = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+                    headers: { 'Accept': 'application/vnd.github.v3+json' },
+                    cache: 'no-store'
                 });
-                return;
-            }
+                if (!resp.ok) {
+                    if (isManual) {
+                        showUpdateDialogDirect(false, "কোনো নতুন সংস্করণ প্রকাশিত হয়নি। আপনার অ্যাপটি আপ-টু-ডেট আছে।");
+                    }
+                    return;
+                }
+                const data = await resp.json();
+                const latestTag = (data.tag_name || "").replace(/^v/, "").trim();
+                let downloadUrl = "https://github.com/" + repo + "/releases/latest/download/calculator-latest.apk";
+                if (data.assets && data.assets.length > 0) {
+                    const apkAsset = data.assets.find(function(a) { return a.name && a.name.endsWith('.apk'); });
+                    if (apkAsset && apkAsset.browser_download_url) {
+                        downloadUrl = apkAsset.browser_download_url;
+                    }
+                }
+                latestReleaseInfo = {
+                    version: latestTag,
+                    url: downloadUrl,
+                    releasePage: data.html_url || ("https://github.com/" + repo + "/releases"),
+                    notes: data.body || "স্বয়ংক্রিয় সংস্করণ আপডেট ও পারফরম্যান্স অপ্টিমাইজেশন।"
+                };
 
-            openInstallGuideModal();
+                const hasUpdate = isNewerVersion(latestTag, CURRENT_APP_VERSION);
+                if (hasUpdate) {
+                    showUpdateDialogDirect(true);
+                } else if (isManual) {
+                    showUpdateDialogDirect(false);
+                }
+            } catch (err) {
+                if (isManual) {
+                    showToast('ইন্টারনেট সংযোগ চেক করুন', '⚠️', 3000);
+                }
+            }
+        }
+
+        function isNewerVersion(latest, current) {
+            if (!latest) return false;
+            const lParts = latest.split('.').map(function(n) { return parseInt(n, 10) || 0; });
+            const cParts = current.split('.').map(function(n) { return parseInt(n, 10) || 0; });
+            const len = Math.max(lParts.length, cParts.length);
+            for (let i = 0; i < len; i++) {
+                const l = lParts[i] || 0;
+                const c = cParts[i] || 0;
+                if (l > c) return true;
+                if (l < c) return false;
+            }
+            return false;
+        }
+
+        function showUpdateDialogDirect(hasUpdate, customMsg) {
+            const modal = document.getElementById('app_update_modal');
+            const titleEl = document.getElementById('update_modal_title');
+            const iconEl = document.getElementById('update_modal_icon');
+            const bodyEl = document.getElementById('update_modal_body');
+            const actionBtn = document.getElementById('update_action_btn');
+            const progressCont = document.getElementById('update_progress_container');
+            if (!modal) return;
+            progressCont.style.display = 'none';
+
+            if (hasUpdate && latestReleaseInfo) {
+                iconEl.innerText = '🎉';
+                iconEl.style.background = '#dcfce7';
+                titleEl.innerText = 'নতুন আপডেট উপলব্ধ!';
+                titleEl.style.color = '#15803d';
+                bodyEl.innerHTML = `
+                    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:12px; margin-bottom:12px;">
+                        <div style="font-weight:700; color:#15803d; font-size:15px;">নতুন সংস্করণ: v${latestReleaseInfo.version}</div>
+                        <div style="font-size:12.5px; color:#64748b; margin-top:2px;">বর্তমান সংস্করণ: v${CURRENT_APP_VERSION}</div>
+                    </div>
+                    <div style="font-size:13.5px; color:#334155; margin-bottom:6px;"><strong>নতুন যা যা যোগ করা হয়েছে:</strong></div>
+                    <div style="background:#f1f5f9; padding:10px 12px; border-radius:10px; font-size:13px; color:#475569; white-space:pre-line; max-height:120px; overflow-y:auto; line-height:1.5;">
+                        ${latestReleaseInfo.notes}
+                    </div>
+                `;
+                actionBtn.style.display = 'inline-block';
+            } else {
+                iconEl.innerText = '✅';
+                iconEl.style.background = '#eff6ff';
+                titleEl.innerText = 'অ্যাপটি আপ-টু-ডেট আছে';
+                titleEl.style.color = '#123e6d';
+                bodyEl.innerHTML = customMsg || `
+                    আপনি অ্যাপের সর্বশেষ সংস্করণ (<strong>v${CURRENT_APP_VERSION}</strong>) ব্যবহার করছেন। এই মুহূর্তে কোনো নতুন আপডেট নেই।
+                `;
+                actionBtn.style.display = 'none';
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeUpdateModal() {
+            const modal = document.getElementById('app_update_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function startAppUpdate() {
+            if (!latestReleaseInfo) return;
+            const progressCont = document.getElementById('update_progress_container');
+            const progressText = document.getElementById('update_progress_text');
+            const actionBtn = document.getElementById('update_action_btn');
+            progressCont.style.display = 'block';
+            actionBtn.disabled = true;
+            actionBtn.style.opacity = '0.6';
+
+            // Native bridge callbacks
+            window.onUpdateProgress = function(msg) {
+                if (progressText) progressText.innerText = msg;
+            };
+            window.onUpdateError = function(err) {
+                if (progressText) progressText.innerText = 'ত্রুটি: ' + err;
+                actionBtn.disabled = false;
+                actionBtn.style.opacity = '1';
+                // Fallback to direct download
+                window.location.href = latestReleaseInfo.url;
+            };
+
+            if (window.AndroidBridge && window.AndroidBridge.downloadAndInstallApk) {
+                window.AndroidBridge.downloadAndInstallApk(latestReleaseInfo.url);
+            } else {
+                // In browser environment, initiate download directly
+                progressText.innerText = 'ব্রাউজারে APK ডাউনলোড হচ্ছে...';
+                const a = document.createElement('a');
+                a.href = latestReleaseInfo.url;
+                a.download = 'calculator-latest.apk';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() {
+                    actionBtn.disabled = false;
+                    actionBtn.style.opacity = '1';
+                }, 2000);
+            }
         }
 
         function openInstallGuideModal() {

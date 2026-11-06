@@ -34,6 +34,22 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Ensure Keystore is Ready
+        run: |
+          mkdir -p app
+          if [ ! -f app/release.keystore ] || [ ! -s app/release.keystore ]; then
+            echo "Generating valid release.keystore..."
+            keytool -genkeypair -v \
+              -keystore app/release.keystore \
+              -alias calculatorKey \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -storepass android123 \
+              -keypass android123 \
+              -dname "CN=Calculator, OU=Mobile, O=LandWood, L=Dhaka, ST=Dhaka, C=BD"
+          fi
+
       - name: Build Signed Release APK with Automatic Version Bump
         id: build_apk
         run: |
@@ -44,6 +60,7 @@ jobs:
           ./gradlew assembleRelease \
             -PversionCode="$VERSION_CODE" \
             -PversionName="$VERSION_NAME" \
+            --no-daemon \
             --stacktrace
           
           mkdir -p release_assets

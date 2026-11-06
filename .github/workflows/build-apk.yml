@@ -28,14 +28,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-
-      - name: Download Gradle Wrapper JAR if missing
-        run: |
-          mkdir -p gradle/wrapper
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Downloading gradle-wrapper.jar..."
-            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.6.0/gradle/wrapper/gradle-wrapper.jar || true
-          fi
+        with:
+          gradle-version: '8.6'
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
@@ -52,12 +46,10 @@ jobs:
             -PversionName="$VERSION_NAME" \
             --stacktrace
           
-          # Prepare APKs for release and artifact
           mkdir -p release_assets
           cp app/build/outputs/apk/release/app-release.apk release_assets/calculator-v${VERSION_NAME}.apk
           cp app/build/outputs/apk/release/app-release.apk release_assets/calculator-latest.apk
           
-          # Create version.json metadata for in-app auto-update checker
           cat <<EOF > release_assets/version.json
           {
             "versionCode": $VERSION_CODE,

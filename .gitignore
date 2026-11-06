@@ -1,0 +1,12 @@
+# Node modules
+node_modules/
+
+# Gradle & Android build files
+.gradle/
+build/
+app/build/
+*.iml
+.idea/
+local.properties
+.DS_Store
+.playwright-cli/

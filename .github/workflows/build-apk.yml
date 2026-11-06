@@ -1,0 +1,104 @@
+name: Build and Release Android APK
+
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Native APK & Auto Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download Gradle Wrapper JAR if missing
+        run: |
+          mkdir -p gradle/wrapper
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            curl -sLo gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.6.0/gradle/wrapper/gradle-wrapper.jar || true
+          fi
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build Signed Release APK with Automatic Version Bump
+        id: build_apk
+        run: |
+          VERSION_CODE="${{ github.run_number }}"
+          VERSION_NAME="1.0.${{ github.run_number }}"
+          echo "Building version $VERSION_NAME (code: $VERSION_CODE)"
+          
+          ./gradlew assembleRelease \
+            -PversionCode="$VERSION_CODE" \
+            -PversionName="$VERSION_NAME" \
+            --stacktrace
+          
+          # Prepare APKs for release and artifact
+          mkdir -p release_assets
+          cp app/build/outputs/apk/release/app-release.apk release_assets/calculator-v${VERSION_NAME}.apk
+          cp app/build/outputs/apk/release/app-release.apk release_assets/calculator-latest.apk
+          
+          # Create version.json metadata for in-app auto-update checker
+          cat <<EOF > release_assets/version.json
+          {
+            "versionCode": $VERSION_CODE,
+            "versionName": "$VERSION_NAME",
+            "downloadUrl": "https://github.com/${{ github.repository }}/releases/download/v${VERSION_NAME}/calculator-latest.apk",
+            "releasePage": "https://github.com/${{ github.repository }}/releases/latest",
+            "publishedAt": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+            "changelog": "স্বয়ংক্রিয় আপডেট: নতুন ফিচার, পারফরম্যান্স অপ্টিমাইজেশন ও বাগ ফিক্স।"
+          }
+          EOF
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Land-Wood-Calculator-v1.0.${{ github.run_number }}-APK
+          path: release_assets/calculator-latest.apk
+
+      - name: Publish GitHub Release (with Direct Download APK)
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Release v1.0.${{ github.run_number }}
+          body: |
+            ## 🚀 জমি ও কাঠ পরিমাপ - স্বয়ংক্রিয় আপডেট (v1.0.${{ github.run_number }})
+            
+            এই রিলিজটি GitHub Actions দ্বারা স্বয়ংক্রিয়ভাবে বিল্ড ও সাইন করা হয়েছে।
+            
+            ### 📥 সরাসরি ডাউনলোড লিংক:
+            * **[calculator-latest.apk](https://github.com/${{ github.repository }}/releases/download/v1.0.${{ github.run_number }}/calculator-latest.apk)** *(সর্বশেষ সংস্করণের সরাসরি ইনস্টলার)*
+            * **[calculator-v1.0.${{ github.run_number }}.apk](https://github.com/${{ github.repository }}/releases/download/v1.0.${{ github.run_number }}/calculator-v1.0.${{ github.run_number }}.apk)**
+            
+            ---
+            * **Version Code**: `${{ github.run_number }}`
+            * **Version Name**: `1.0.${{ github.run_number }}`
+            * **Signature**: একই কীস্টোর (Persistent Keystore) দ্বারা স্বাক্ষরিত — পূর্ববর্তী অ্যাপ আনইনস্টল না করেই সরাসরি আপডেট করা যাবে!
+          files: |
+            release_assets/calculator-latest.apk
+            release_assets/calculator-v1.0.${{ github.run_number }}.apk
+            release_assets/version.json
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

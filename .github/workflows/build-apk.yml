@@ -1,8 +1,8 @@
-name: Build and Release Android APK
+name: Build and Release Offline Android APK
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 permissions:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    name: Build Native APK & Auto Release
+    name: Build Offline APK & Release
     runs-on: ubuntu-latest
 
     steps:
@@ -53,14 +53,18 @@ jobs:
           fi
           cp -f app/release.keystore release.keystore 2>/dev/null || true
 
-      - name: Build Signed Release APK with Automatic Version Bump
+      - name: Build Signed Offline APK with Automatic Version Bump
         id: build_apk
         run: |
           VERSION_CODE="${{ github.run_number }}"
           VERSION_NAME="1.0.${{ github.run_number }}"
-          echo "Building version $VERSION_NAME (code: $VERSION_CODE)"
+          echo "Building offline Android APK version $VERSION_NAME (code: $VERSION_CODE)"
           
-          # Try assembleRelease first; if signing or proguard complains, fall back to assembleDebug
+          # Guarantee all latest web assets are bundled inside the offline APK assets directory
+          mkdir -p app/src/main/assets
+          cp -f index.html icon.png icon-192.png icon-512.png manifest.json app/src/main/assets/
+          
+          # Build release APK, fall back to debug if release signing has environment quirks
           if ./gradlew assembleRelease \
             -PversionCode="$VERSION_CODE" \
             -PversionName="$VERSION_NAME" \
@@ -93,7 +97,7 @@ jobs:
             "downloadUrl": "https://github.com/${{ github.repository }}/releases/download/v${VERSION_NAME}/calculator-latest.apk",
             "releasePage": "https://github.com/${{ github.repository }}/releases/latest",
             "publishedAt": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
-            "changelog": "স্বয়ংক্রিয় আপডেট: নতুন ফিচার, পারফরম্যান্স অপ্টিমাইজেশন ও বাগ ফিক্স।"
+            "changelog": "স্বয়ংক্রিয় আপডেট: জমি, নল, মাটি ও কাঠের পরিমাপক অফলাইন APK।"
           }
           EOF
 
@@ -110,9 +114,9 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
           body: |
-            ## 🚀 জমি ও কাঠ পরিমাপ - স্বয়ংক্রিয় আপডেট (v1.0.${{ github.run_number }})
+            ## 📱 জমি ও কাঠ পরিমাপ - অফলাইন অ্যান্ড্রয়েড APK (v1.0.${{ github.run_number }})
             
-            এই রিলিজটি GitHub Actions দ্বারা স্বয়ংক্রিয়ভাবে বিল্ড ও সাইন করা হয়েছে।
+            এই APK-টি সম্পূর্ণ অফলাইন — কোনো ইন্টারনেট সংযোগ ছাড়াই সব হিসাব এবং প্রিন্ট রিপোর্ট তৈরি করতে পারবেন।
             
             ### 📥 সরাসরি ডাউনলোড লিংক:
             * **[calculator-latest.apk](https://github.com/${{ github.repository }}/releases/download/v1.0.${{ github.run_number }}/calculator-latest.apk)** *(সর্বশেষ সংস্করণের সরাসরি ইনস্টলার)*
@@ -121,7 +125,8 @@ jobs:
             ---
             * **Version Code**: `${{ github.run_number }}`
             * **Version Name**: `1.0.${{ github.run_number }}`
-            * **Signature**: একই কীস্টোর (Persistent Keystore) দ্বারা স্বাক্ষরিত — পূর্ববর্তী অ্যাপ আনইনস্টল না করেই সরাসরি আপডেট করা যাবে!
+            * **Type**: সম্পূর্ণ অফলাইন (100% Offline Embedded WebApp)
+            * **Signature**: একই পারসিস্টেন্ট কীস্টোর দ্বারা সাইন করা — আনইনস্টল না করেই সরাসরি আপডেট করা যাবে।
           files: |
             release_assets/calculator-latest.apk
             release_assets/calculator-v1.0.${{ github.run_number }}.apk

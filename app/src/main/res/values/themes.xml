@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.LandWood" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.LandWood" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#123E6D</item>
+        <item name="colorPrimaryDark">#0D2F54</item>
+        <item name="colorAccent">#2563EB</item>
         <item name="android:statusBarColor">#123E6D</item>
     </style>
 </resources>

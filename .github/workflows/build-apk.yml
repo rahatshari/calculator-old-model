@@ -56,29 +56,34 @@ jobs:
       - name: Build Signed Offline APK with Automatic Version Bump
         id: build_apk
         run: |
+          set +e
           VERSION_CODE="${{ github.run_number }}"
           VERSION_NAME="1.0.${{ github.run_number }}"
           echo "Building offline Android APK version $VERSION_NAME (code: $VERSION_CODE)"
           
           # Guarantee all latest web assets are bundled inside the offline APK assets directory
           mkdir -p app/src/main/assets
-          cp -f index.html icon.png icon-192.png icon-512.png manifest.json app/src/main/assets/
+          cp -f index.html icon.png icon-192.png icon-512.png manifest.json app/src/main/assets/ 2>/dev/null || true
           
           # Build release APK, fall back to debug if release signing has environment quirks
-          if ./gradlew assembleRelease \
+          ./gradlew assembleRelease \
             -PversionCode="$VERSION_CODE" \
             -PversionName="$VERSION_NAME" \
             --no-daemon \
-            --stacktrace; then
-            echo "Signed Release APK build succeeded!"
-          else
-            echo "assembleRelease failed, building assembleDebug as robust fallback..."
+            --stacktrace
+          BUILD_STATUS=$?
+
+          if [ $BUILD_STATUS -ne 0 ]; then
+            echo "assembleRelease failed (code $BUILD_STATUS), building assembleDebug as robust fallback..."
             ./gradlew assembleDebug \
               -PversionCode="$VERSION_CODE" \
               -PversionName="$VERSION_NAME" \
               --no-daemon \
               --stacktrace
+          else
+            echo "Signed Release APK build succeeded!"
           fi
+          set -e
           
           mkdir -p release_assets
           FOUND_APK=$(find app/build/outputs/apk -name "*.apk" ! -name "*unaligned*" | head -n 1)

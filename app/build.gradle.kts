@@ -22,12 +22,15 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("release.keystore")
-            storePassword = "android123"
-            keyAlias = "calculatorKey"
-            keyPassword = "android123"
-            enableV1Signing = true
-            enableV2Signing = true
+            val keyFile = file("release.keystore")
+            if (keyFile.exists()) {
+                storeFile = keyFile
+                storePassword = "android123"
+                keyAlias = "calculatorKey"
+                keyPassword = "android123"
+                enableV1Signing = true
+                enableV2Signing = true
+            }
         }
     }
 
@@ -35,10 +38,16 @@ android {
         release {
             isMinifyEnabled = false
             isShrinkResources = false
-            signingConfig = signingConfigs.getByName("release")
+            val keyFile = file("release.keystore")
+            if (keyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
-            signingConfig = signingConfigs.getByName("release")
+            val keyFile = file("release.keystore")
+            if (keyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

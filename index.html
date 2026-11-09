@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>জমি ও কাঠ পরিমাপ</title>
-    <meta name="description" content="জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
-    <meta property="og:title" content="জমি ও কাঠ পরিমাপ">
-    <meta property="og:description" content="জমি, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
+    <title>হিসাব ক্যালকুলেটর</title>
+    <meta name="description" content="জমি, নল, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
+    <meta property="og:title" content="হিসাব ক্যালকুলেটর">
+    <meta property="og:description" content="জমি, নল, মাটি ও কাঠের পরিমাপ এবং হিসাবের পূর্ণাঙ্গ ক্যালকুলেটর ও রিপোর্ট জেনারেটর।">
     
     <!-- PWA ও আইকন লিংক (GitHub Pages ও যে কোনো সাব-ডিরেক্টরিতে কাজ করার জন্য Relative Paths) -->
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#123e6d">
+    <meta name="theme-color" content="#00796b">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="জমি ও কাঠ">
+    <meta name="apple-mobile-web-app-title" content="হিসাব ক্যালকুলেটর">
     <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
@@ -227,7 +226,8 @@
             transform: scale(0.97);
         }
 
-        /* --- ১ম পেজ (ড্যাশবোর্ড মেনু): সম্পূর্ণ ফুল স্ক্রিন --- */
+        /* --- ১ম পেজ (ক্লিন মেনু ড্যাশবোর্ড) --- */
+        /* --- ১ম পেজ (ড্যাশবোর্ড মেনু) --- */
         #screen_menu.active {
             flex: 1;
             display: flex;
@@ -236,15 +236,14 @@
             min-height: 100vh;
             min-height: 100dvh;
             background: linear-gradient(180deg, #f0f4f9 0%, #f8fafc 100%);
-            animation: screenFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .dashboard-grid-wrapper {
             flex: 1;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 24px 20px 45px 20px;
+            padding: 24px 18px 45px 18px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -274,12 +273,12 @@
             }
         }
 
-        /* --- আধুনিক এনিমেটেড কার্ডস --- */
+        /* --- আসল এনিমেটেড কার্ডস --- */
         .dash-card {
             background: #ffffff;
             border: 1.5px solid #e2e8f0;
             border-radius: 22px;
-            padding: 28px 14px;
+            padding: 26px 14px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
             cursor: pointer;
@@ -369,7 +368,7 @@
         .dash-action-hint {
             font-size: 12.5px;
             font-weight: 700;
-            color: #123e6d;
+            color: #00796b;
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -381,47 +380,275 @@
             opacity: 1;
         }
 
-        .offline-banner-box {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-top: 22px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            animation: screenFadeIn 0.5s ease 0.15s backwards;
-        }
-        .offline-banner-icon {
-            font-size: 26px;
-            flex-shrink: 0;
-        }
-        .offline-banner-text {
-            font-size: 13px;
-            color: #475569;
-            line-height: 1.5;
-        }
-        .offline-banner-text strong {
-            color: #0f172a;
-        }
-
-        /* --- সাব-স্ক্রিন টপ বার (স্মুথ, দ্রুত রেসপন্সিভ) --- */
+        /* --- আধুনিক টপ বার (সব স্ক্রিনে একরকম প্রফেশনাল থিম) --- */
         .top-bar {
-            background: linear-gradient(135deg, #0d3159 0%, #123e6d 100%);
+            background: linear-gradient(135deg, #00695c 0%, #00897b 100%);
             color: #ffffff;
-            padding: 12px 16px;
+            padding: 12px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 10px;
-            box-shadow: 0 4px 18px rgba(18, 62, 109, 0.2);
+            box-shadow: 0 3px 12px rgba(0, 105, 92, 0.25);
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(12px);
             width: 100%;
             box-sizing: border-box;
+        }
+
+        .topbar-menu-btn {
+            background: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            flex-shrink: 0;
+        }
+        .topbar-menu-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .topbar-history-btn {
+            background: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            height: 40px;
+            padding: 0 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: inherit;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            flex-shrink: 0;
+        }
+        .topbar-history-btn:hover {
+            background: rgba(255, 255, 255, 0.26);
+        }
+        .topbar-history-btn:active {
+            transform: scale(0.94);
+        }
+        .header-history-badge {
+            background: #facc15;
+            color: #78350f;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 1px 7px;
+            border-radius: 10px;
+            margin-left: 2px;
+        }
+
+        /* --- থ্রি-ডট মেনু ও আপডেট ড্রপডাউন মোডাল --- */
+        .menu-modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+            animation: popInBounce 0.25s ease;
+        }
+        .menu-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .menu-modal-header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .modal-close-icon {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .modal-close-icon:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .menu-version-banner {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 14px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .menu-version-title {
+            font-weight: 700;
+            color: #166534;
+            font-size: 14.5px;
+        }
+        .menu-version-num {
+            font-size: 12.5px;
+            color: #15803d;
+            margin-top: 1px;
+        }
+        .menu-version-badge {
+            background: #22c55e;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
+
+        .menu-section-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .menu-section-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .menu-section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .menu-section-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .menu-section-label {
+            font-size: 14.5px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+        .menu-section-sub {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .menu-action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00796b 0%, #00897b 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 121, 107, 0.25);
+            transition: all 0.2s ease;
+        }
+        .menu-action-btn:hover {
+            box-shadow: 0 6px 16px rgba(0, 121, 107, 0.35);
+            transform: translateY(-1px);
+        }
+        .menu-action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* --- টগল সুইচ (Toggle Switch) --- */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .25s ease;
+            border-radius: 28px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s ease;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #00897b;
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        .menu-close-btn {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .menu-close-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
         }
         .back-btn {
             background: rgba(255, 255, 255, 0.18);
@@ -830,6 +1057,10 @@
             94% { transform: rotate(3deg); }
             96% { transform: rotate(-2deg); }
             98% { transform: rotate(2deg); }
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         /* --- Print Styles --- */
@@ -1317,26 +1548,12 @@
              মেইন মেনু (হোম স্ক্রিন - ১০০% ফুল স্ক্রিন)
              ========================================== -->
         <div id="screen_menu" class="screen active no-print">
-            <div class="app-header">
-                <div class="header-content">
-                    <div class="header-logo-badge">
-                        <img src="icon.png" alt="App Icon">
-                    </div>
-                    <h2>জমি ও কাঠ পরিমাপ</h2>
-                    <p>নির্ভুল হিসাবের ডিজিটাল ক্যালকুলেটর (সম্পূর্ণ অফলাইন)</p>
-
-                    <div class="header-badges-row">
-                        <div id="offline_status_pill" class="offline-status-pill">
-                            <span class="pulse-dot"></span> সম্পূর্ণ অফলাইন প্রস্তুত
-                        </div>
-                        <button class="header-history-btn" onclick="openScreen('screen_history')" title="হিসাবের হিস্ট্রি দেখুন">
-                            <span>📋</span> হিস্ট্রি <span id="header_history_badge" class="header-history-badge">০</span>
-                        </button>
-                        <button id="app_update_btn" class="header-update-btn" onclick="checkAppUpdate(true)" title="নতুন সংস্করণ চেক করুন">
-                            <span>🔄</span> আপডেট
-                        </button>
-                    </div>
-                </div>
+            <div class="top-bar">
+                <button class="topbar-menu-btn" onclick="openMenuModal()" title="মেনু ও আপডেট">⋮</button>
+                <h3 class="screen-title">হিসাব ক্যালকুলেটর</h3>
+                <button class="topbar-history-btn" onclick="openScreen('screen_history')" title="হিসাবের হিস্ট্রি দেখুন">
+                    <span>📋</span> হিস্ট্রি <span id="header_history_badge" class="header-history-badge">০</span>
+                </button>
             </div>
 
             <div class="dashboard-grid-wrapper">
@@ -1388,28 +1605,6 @@
                         <span class="dash-title">কাঠের হিসাব</span>
                         <span class="dash-desc">গোল গুঁড়ি ও তক্তার CFT ও দর</span>
                         <span class="dash-action-hint">হিসাব করুন ➔</span>
-                    </div>
-                </div>
-
-                <!-- হিস্ট্রি ব্যানার কার্ড -->
-                <div class="dash-history-card" onclick="openScreen('screen_history')">
-                    <div class="dash-history-left">
-                        <div class="dash-history-icon-box">📋</div>
-                        <div class="dash-history-info">
-                            <div class="dash-history-title-row">
-                                <span class="dash-history-title">হিসাবের হিস্ট্রি ও রেকর্ড</span>
-                                <span id="dash_history_count_pill" class="dash-history-pill">০ টি সংরক্ষিত</span>
-                            </div>
-                            <div class="dash-history-desc">পূর্বে করা জমি, মাটি ও কাঠের সমস্ত হিসাব এক নজরে দেখুন ও নোট রাখুন</div>
-                        </div>
-                    </div>
-                    <div class="dash-history-arrow">হিস্ট্রি দেখুন ➔</div>
-                </div>
-
-                <div class="offline-banner-box">
-                    <div class="offline-banner-icon">⚡</div>
-                    <div class="offline-banner-text">
-                        <strong>সম্পূর্ণ অফলাইন অ্যাপ:</strong> কোনো ইন্টারনেট বা ডাটা সংযোগ ছাড়াই যে কোনো সময় জমি, নল, মাটি ও কাঠের পরিমাপ এবং প্রিন্ট রিপোর্ট তৈরি করতে পারবেন।
                     </div>
                 </div>
             </div>
@@ -1723,8 +1918,17 @@
                     <button type="button" class="add-btn" onclick="addMatiField('mati_hei_container')"><span>➕</span> আরও মাপ যোগ করুন</button>
                 </div>
 
-                <label>প্রতি ফুট মাটির দাম (টাকা):</label>
-                <input type="number" id="mati_rate" placeholder="০" style="margin-bottom: 10px;">
+                <!-- মাটির রেট মোড সিলেক্টর (ডিফল্ট: ১০০০ ফুট) -->
+                <div style="margin-top:14px; margin-bottom:8px;">
+                    <label style="margin: 0 0 8px 0; font-size:14.5px;">মাটির দামের ধরণ:</label>
+                    <div class="tabs" style="margin-bottom: 12px;">
+                        <button type="button" id="btn_mati_rate_1000" class="tab-btn active" onclick="setMatiRateMode('1000')">১০০০ ফুট মাটির দাম</button>
+                        <button type="button" id="btn_mati_rate_1" class="tab-btn" onclick="setMatiRateMode('1')">প্রতি ফুট মাটির দাম</button>
+                    </div>
+                </div>
+
+                <label id="mati_rate_label">১০০০ ফুট মাটির দাম (টাকা):</label>
+                <input type="number" id="mati_rate" placeholder="যেমন: ৪০০০" style="margin-bottom: 10px;">
 
                 <div class="grid-buttons">
                     <button class="action-btn btn-clear" onclick="clearMatiArea()">মুছুন</button>
@@ -2013,6 +2217,69 @@
             <button onclick="closeInstallGuideModal()" style="width:100%; padding:13px; background:#123e6d; color:#fff; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;">
                 বুঝেছি / বন্ধ করুন
             </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         অ্যাপ সেটিংস ও আপডেট মোডাল (থ্রি-ডট আইকন থেকে)
+         ========================================== -->
+    <div id="app_menu_modal" class="custom-modal-backdrop" onclick="if(event.target === this) closeMenuModal()" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); backdrop-filter:blur(5px); z-index:999998; align-items:center; justify-content:center; padding:16px;">
+        <div class="menu-modal-card">
+            <div class="menu-modal-header">
+                <div class="menu-modal-header-title">
+                    <span style="font-size: 20px;">⚙️</span>
+                    <span>অ্যাপ সেটিংস ও আপডেট</span>
+                </div>
+                <button class="modal-close-icon" onclick="closeMenuModal()">✕</button>
+            </div>
+
+            <!-- ভার্সন পরিচিতি -->
+            <div class="menu-version-banner">
+                <div class="menu-version-left">
+                    <div class="menu-version-title">হিসাব ক্যালকুলেটর</div>
+                    <div class="menu-version-num">বর্তমান সংস্করণ: <strong id="menu_current_ver_text">v১.০.০</strong></div>
+                </div>
+                <div class="menu-version-badge">✓ সক্রিয়</div>
+            </div>
+
+            <!-- অটো আপডেট চেক নিয়ন্ত্রণ -->
+            <div class="menu-section-card">
+                <div class="menu-section-row">
+                    <div class="menu-section-icon" style="background:#fef3c7; color:#d97706;">⚡</div>
+                    <div class="menu-section-text">
+                        <div class="menu-section-label">অটো আপডেট চেক</div>
+                        <div id="auto_update_status_desc" class="menu-section-sub">অ্যাপ চালু হলে নতুন সংস্করণ চেক করবে</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="auto_update_checkbox" onchange="toggleAutoUpdate(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ইন-অ্যাপ আপডেট সেকশন -->
+            <div class="menu-section-card">
+                <div class="menu-section-row">
+                    <div class="menu-section-icon" style="background:#e0f2fe; color:#00796b;">🔄</div>
+                    <div class="menu-section-text">
+                        <div class="menu-section-label">অ্যাপ আপডেট</div>
+                        <div class="menu-section-sub">অ্যাপের ভেতরেই সরাসরি নতুন সংস্করণ ডাউনলোড ও ইনস্টল</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 14px;">
+                    <button id="menu_check_update_btn" class="menu-action-btn" onclick="checkAppUpdate(true)">
+                        <span id="menu_update_btn_icon">🔄</span> নতুন আপডেট চেক করুন
+                    </button>
+                </div>
+
+                <div id="menu_update_status_text" style="font-size: 12.5px; color: #64748b; margin-top: 10px; text-align: center; display: none;"></div>
+            </div>
+
+            <div style="margin-top: 16px; text-align: center;">
+                <button class="menu-close-btn" onclick="closeMenuModal()">বন্ধ করুন</button>
+            </div>
+        </div>
     </div>
 
     <!-- In-App Auto Update Modal Dialog -->
@@ -2181,6 +2448,42 @@
         const CURRENT_APP_VERSION = (window.AndroidBridge && window.AndroidBridge.getAppVersion) ? window.AndroidBridge.getAppVersion() : "1.0.0";
         let latestReleaseInfo = null;
 
+        function openMenuModal() {
+            const modal = document.getElementById('app_menu_modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const verEl = document.getElementById('menu_current_ver_text');
+                if (verEl) verEl.innerText = 'v' + CURRENT_APP_VERSION;
+
+                const autoEnabled = localStorage.getItem('auto_update_enabled') !== 'false';
+                const chk = document.getElementById('auto_update_checkbox');
+                if (chk) chk.checked = autoEnabled;
+                updateAutoUpdateDesc(autoEnabled);
+
+                const statusEl = document.getElementById('menu_update_status_text');
+                if (statusEl) statusEl.style.display = 'none';
+            }
+        }
+
+        function closeMenuModal() {
+            const modal = document.getElementById('app_menu_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function updateAutoUpdateDesc(enabled) {
+            const desc = document.getElementById('auto_update_status_desc');
+            if (desc) {
+                desc.innerText = enabled ? 'অ্যাপ চালু হলে নতুন সংস্করণ চেক করবে' : 'স্বয়ংক্রিয় আপডেট চেক বন্ধ আছে';
+                desc.style.color = enabled ? '#15803d' : '#94a3b8';
+            }
+        }
+
+        function toggleAutoUpdate(isChecked) {
+            localStorage.setItem('auto_update_enabled', isChecked ? 'true' : 'false');
+            updateAutoUpdateDesc(isChecked);
+            showToast(isChecked ? 'অটো আপডেট চালু করা হয়েছে' : 'অটো আপডেট বন্ধ করা হয়েছে', isChecked ? '✅' : '⏸️', 2000);
+        }
+
         function isAppRunningStandalone() {
             if (window.AndroidBridge && window.AndroidBridge.isNativeApp && window.AndroidBridge.isNativeApp()) return true;
             if (window.matchMedia('(display-mode: standalone)').matches) return true;
@@ -2188,33 +2491,54 @@
             return false;
         }
 
-        // Clean UI: Always hide install button if inside app or standalone
+        // Clean UI: Initialize update toggle & auto-check on startup
         window.addEventListener('DOMContentLoaded', function() {
             const installBtn = document.getElementById('pwa_install_btn');
             if (installBtn) {
-                installBtn.style.display = 'none'; // Inside the app, install button is not needed
+                installBtn.style.display = 'none';
             }
-            // Silent check for updates if connected to internet after 3 seconds
-            setTimeout(function() {
-                if (navigator.onLine) {
-                    checkAppUpdate(false);
-                }
-            }, 3000);
+
+            const autoEnabled = localStorage.getItem('auto_update_enabled') !== 'false';
+            const chk = document.getElementById('auto_update_checkbox');
+            if (chk) chk.checked = autoEnabled;
+            updateAutoUpdateDesc(autoEnabled);
+
+            // If auto-update is enabled and device is online, check silently
+            if (autoEnabled) {
+                setTimeout(function() {
+                    if (navigator.onLine) {
+                        checkAppUpdate(false);
+                    }
+                }, 2500);
+            }
         });
 
         // In-app auto-update checking logic (GitHub Releases API)
         async function checkAppUpdate(isManual) {
             const repo = localStorage.getItem('github_repo') || 'rahatshari/calculator-old-model';
+            const statusEl = document.getElementById('menu_update_status_text');
+            const iconEl = document.getElementById('menu_update_btn_icon');
+
             if (isManual) {
                 showToast('আপডেট চেক করা হচ্ছে...', '🔄', 2000);
+                if (statusEl) {
+                    statusEl.style.display = 'block';
+                    statusEl.innerHTML = '<span style="color:#00796b;">🔄 নতুন সংস্করণ চেক করা হচ্ছে...</span>';
+                }
+                if (iconEl) iconEl.style.animation = 'spin 1s linear infinite';
             }
+
             try {
                 const resp = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
                     headers: { 'Accept': 'application/vnd.github.v3+json' },
                     cache: 'no-store'
                 });
+
+                if (iconEl) iconEl.style.animation = '';
+
                 if (!resp.ok) {
                     if (isManual) {
+                        if (statusEl) statusEl.innerHTML = '<span style="color:#15803d;">✅ আপনার অ্যাপটি আপ-টু-ডেট আছে (v' + CURRENT_APP_VERSION + ')</span>';
                         showUpdateDialogDirect(false, "কোনো নতুন সংস্করণ প্রকাশিত হয়নি। আপনার অ্যাপটি আপ-টু-ডেট আছে।");
                     }
                     return;
@@ -2237,12 +2561,16 @@
 
                 const hasUpdate = isNewerVersion(latestTag, CURRENT_APP_VERSION);
                 if (hasUpdate) {
+                    closeMenuModal();
                     showUpdateDialogDirect(true);
                 } else if (isManual) {
+                    if (statusEl) statusEl.innerHTML = '<span style="color:#15803d;">✅ আপনার অ্যাপটি আপ-টু-ডেট আছে (v' + CURRENT_APP_VERSION + ')</span>';
                     showUpdateDialogDirect(false);
                 }
             } catch (err) {
+                if (iconEl) iconEl.style.animation = '';
                 if (isManual) {
+                    if (statusEl) statusEl.innerHTML = '<span style="color:#dc2626;">⚠️ ইন্টারনেট সংযোগ বা সার্ভারে সমস্যা</span>';
                     showToast('ইন্টারনেট সংযোগ চেক করুন', '⚠️', 3000);
                 }
             }
@@ -2496,7 +2824,7 @@
 
             var printContent = `
                 <div class="print-header" style="text-align:center; margin-bottom:15px; border-bottom:2px solid #000; padding-bottom:10px;">
-                    <h2 style="margin:0; font-size:22px; color:#000; font-weight:800;">জমি ও কাঠ পরিমাপ</h2>
+                    <h2 style="margin:0; font-size:22px; color:#000; font-weight:800;">হিসাব ক্যালকুলেটর</h2>
                     <p style="margin:4px 0 0 0; font-size:15px; color:#333; font-weight:600;">${titleText}</p>
                     <p style="margin:4px 0 0 0; font-size:12px; color:#666;">তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
                 </div>
@@ -2661,7 +2989,6 @@
             };
             list.unshift(record);
             saveCalculationHistory(list);
-            showToast('হিসাবটি হিস্ট্রিতে সংরক্ষিত হয়েছে 💾', '✅', 2500);
         }
 
         function updateHistoryUI() {
@@ -2826,7 +3153,7 @@
                 return;
             }
 
-            let text = 'জমি ও কাঠ পরিমাপ — সংরক্ষিত হিস্ট্রি রিপোর্ট\n';
+            let text = 'হিসাব ক্যালকুলেটর — সংরক্ষিত হিস্ট্রি রিপোর্ট\n';
             text += 'মোট হিসাব: ' + toBengaliNum(list.length.toString()) + ' টি\n';
             text += '====================================\n\n';
 
@@ -3296,6 +3623,28 @@
         }
 
         /* ---------------- মাটির হিসাব কোড ---------------- */
+        let currentMatiRateMode = '1000'; // ডিফল্ট: ১০০০ ফুট (হাজার) মাটির দাম
+
+        function setMatiRateMode(mode) {
+            currentMatiRateMode = mode;
+            const btn1000 = document.getElementById('btn_mati_rate_1000');
+            const btn1 = document.getElementById('btn_mati_rate_1');
+            const label = document.getElementById('mati_rate_label');
+            const input = document.getElementById('mati_rate');
+            
+            if (mode === '1000') {
+                if (btn1000) btn1000.classList.add('active');
+                if (btn1) btn1.classList.remove('active');
+                if (label) label.innerText = '১০০০ ফুট মাটির দাম (টাকা):';
+                if (input) input.placeholder = 'যেমন: ৪০০০';
+            } else {
+                if (btn1) btn1.classList.add('active');
+                if (btn1000) btn1000.classList.remove('active');
+                if (label) label.innerText = 'প্রতি ফুট মাটির দাম (টাকা):';
+                if (input) input.placeholder = 'যেমন: ৪';
+            }
+        }
+
         function addMatiField(containerId) {
             const container = document.getElementById(containerId);
             const count = container.querySelectorAll('.mati-row').length + 1;
@@ -3330,7 +3679,12 @@
             document.getElementById('mati_total_cft').innerText = toBengaliNum(totalCft.toFixed(2));
             let priceText = '';
             if (rate > 0) {
-                let totalPrice = Math.round(totalCft * rate);
+                let totalPrice = 0;
+                if (currentMatiRateMode === '1000') {
+                    totalPrice = Math.round((totalCft / 1000) * rate);
+                } else {
+                    totalPrice = Math.round(totalCft * rate);
+                }
                 priceText = toBengaliNum(totalPrice.toString()) + ' টাকা';
                 document.getElementById('mati_total_price').innerText = toBengaliNum(totalPrice.toString());
                 document.getElementById('mati_price_container').style.display = 'block';
@@ -3338,18 +3692,21 @@
                 document.getElementById('mati_price_container').style.display = 'none'; 
             }
 
+            const rateUnitLabel = currentMatiRateMode === '1000' ? '১০০০ ফুট মাটির দর' : 'প্রতি ফুট মাটির দর';
+            const rateUnitSuffix = currentMatiRateMode === '1000' ? ' ৳/হাজার ফুট' : ' ৳/ফুট';
+
             addHistoryRecord({
                 category: 'mati',
                 categoryName: 'মাটির হিসাব',
                 icon: '⛰️',
                 title: 'মাটি পরিমাপ (ফুট / CFT)',
                 mainResult: toBengaliNum(totalCft.toFixed(2)) + ' ফুট (CFT)',
-                subResult: rate > 0 ? 'মোট দাম: ' + priceText + ' (দর: ' + toBengaliNum(rate.toString()) + ' ৳/ফুট)' : 'গড় মাপ: ' + toBengaliNum(avgLen.toFixed(1)) + '\' × ' + toBengaliNum(avgWid.toFixed(1)) + '\' × ' + toBengaliNum(avgHei.toFixed(1)) + '\'',
+                subResult: rate > 0 ? 'মোট দাম: ' + priceText + ' (' + toBengaliNum(rate.toString()) + rateUnitSuffix + ')' : 'গড় মাপ: ' + toBengaliNum(avgLen.toFixed(1)) + '\' × ' + toBengaliNum(avgWid.toFixed(1)) + '\' × ' + toBengaliNum(avgHei.toFixed(1)) + '\'',
                 inputs: [
                     { label: 'গড় দৈর্ঘ্য', val: toBengaliNum(avgLen.toFixed(2)) + ' ফুট' },
                     { label: 'গড় প্রস্থ', val: toBengaliNum(avgWid.toFixed(2)) + ' ফুট' },
                     { label: 'গড় উচ্চতা/গভীরতা', val: toBengaliNum(avgHei.toFixed(2)) + ' ফুট' },
-                    { label: 'প্রতি ফুট মাটির দর', val: rate > 0 ? toBengaliNum(rate.toString()) + ' টাকা' : '-' }
+                    { label: rateUnitLabel, val: rate > 0 ? toBengaliNum(rate.toString()) + ' টাকা' : '-' }
                 ],
                 results: [
                     { label: 'মোট মাটি', val: toBengaliNum(totalCft.toFixed(2)) + ' ফুট (CFT)' },
@@ -3367,6 +3724,7 @@
             document.getElementById('mati_hei_container').innerHTML = resetHTMLOne;
             document.getElementById('mati_rate').value = '';
             document.getElementById('res_mati_area').style.display = 'none';
+            setMatiRateMode('1000');
         }
 
         /* ---------------- গাছ ও কাঠের হিসাব ---------------- */

@@ -2048,6 +2048,74 @@
         </div>
     </div>
 
+    <!-- Share Options Modal Dialog -->
+    <div id="share_options_modal" onclick="if(event.target === this) closeShareModal()" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); backdrop-filter:blur(5px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#ffffff; border-radius:24px; max-width:440px; width:100%; padding:24px 22px; text-align:left; box-shadow:0 25px 50px -12px rgba(0,0,0,0.3); animation:popInBounce 0.35s ease; max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:42px; height:42px; border-radius:12px; background:#fef3c7; display:flex; align-items:center; justify-content:center; font-size:22px;">🔗</div>
+                    <h3 id="share_modal_title" style="margin:0; font-size:18px; color:#123e6d; font-weight:800;">রিপোর্ট শেয়ার করুন</h3>
+                </div>
+                <button onclick="closeShareModal()" style="background:none; border:none; font-size:20px; color:#64748b; cursor:pointer; padding:4px;">✕</button>
+            </div>
+
+            <div style="font-size:13px; color:#64748b; margin-bottom:12px;">নিচের যেকোনো মাধ্যমে রিপোর্টটি সরাসরি পাঠিয়ে দিন:</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+                <button onclick="shareViaWhatsApp()" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:#25D366; color:#ffffff; border:none; border-radius:12px; font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:0 4px 10px rgba(37,211,102,0.3);">
+                    <span>💬</span> WhatsApp
+                </button>
+                <button onclick="shareViaSMS()" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:#2563eb; color:#ffffff; border:none; border-radius:12px; font-weight:700; font-size:13.5px; cursor:pointer; box-shadow:0 4px 10px rgba(37,99,235,0.3);">
+                    <span>✉️</span> মেসেজ / SMS
+                </button>
+                <button onclick="copyShareTextDirect()" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; border-radius:12px; font-weight:700; font-size:13.5px; cursor:pointer;">
+                    <span>📋</span> কপি করুন
+                </button>
+                <button onclick="shareViaEmail()" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; background:#f1f5f9; color:#1e293b; border:1px solid #cbd5e1; border-radius:12px; font-weight:700; font-size:13.5px; cursor:pointer;">
+                    <span>📧</span> ইমেইল
+                </button>
+            </div>
+
+            <div style="font-size:12.5px; font-weight:600; color:#475569; margin-bottom:6px;">রিপোর্ট প্রিভিউ:</div>
+            <textarea id="share_preview_text" readonly style="width:100%; height:110px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px; font-size:12.5px; color:#334155; resize:none; font-family:inherit;"></textarea>
+
+            <div style="margin-top:14px; text-align:right;">
+                <button onclick="closeShareModal()" style="padding:9px 20px; background:#e2e8f0; border:none; border-radius:10px; color:#334155; font-weight:700; font-size:13.5px; cursor:pointer;">
+                    বন্ধ করুন
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Preview / Standalone Window Modal -->
+    <div id="print_preview_modal" onclick="if(event.target === this) closePrintPreviewModal()" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.65); backdrop-filter:blur(5px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#ffffff; border-radius:24px; max-width:550px; width:100%; padding:24px 22px; text-align:left; box-shadow:0 25px 50px -12px rgba(0,0,0,0.3); animation:popInBounce 0.35s ease; max-height:90vh; display:flex; flex-direction:column;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:42px; height:42px; border-radius:12px; background:#eff6ff; display:flex; align-items:center; justify-content:center; font-size:22px;">🖨️</div>
+                    <div>
+                        <h3 id="print_modal_title" style="margin:0; font-size:18px; color:#123e6d; font-weight:800;">প্রিন্ট ও রিপোর্ট ভিউ</h3>
+                        <div style="font-size:12px; color:#64748b;">A4 পেজ / PDF ফরম্যাটে প্রিন্ট করুন</div>
+                    </div>
+                </div>
+                <button onclick="closePrintPreviewModal()" style="background:none; border:none; font-size:20px; color:#64748b; cursor:pointer; padding:4px;">✕</button>
+            </div>
+
+            <div id="print_modal_body" style="flex:1; overflow-y:auto; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:16px; margin-bottom:16px;">
+                <!-- Printable table loaded here -->
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button onclick="closePrintPreviewModal()" style="padding:10px 18px; background:#f1f5f9; border:none; border-radius:12px; color:#475569; font-weight:700; font-size:14px; cursor:pointer;">
+                    বন্ধ করুন
+                </button>
+                <button onclick="openStandalonePrintWindow()" style="padding:10px 22px; background:#123e6d; border:none; border-radius:12px; color:#ffffff; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 4px 12px rgba(18,62,109,0.3); display:inline-flex; align-items:center; gap:6px;">
+                    <span>🖨️</span> প্রিন্ট / PDF সংরক্ষণ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Connectivity Toast Notification -->
     <div id="connectivity_toast" style="display:none; position:fixed; bottom:25px; left:50%; transform:translateX(-50%); background:#0f172a; color:#ffffff; padding:12px 24px; border-radius:30px; font-size:14px; font-weight:600; z-index:999998; box-shadow:0 10px 25px rgba(0,0,0,0.3); align-items:center; gap:10px; transition:opacity 0.3s ease; pointer-events:none;">
         <span id="toast_icon" style="font-size:18px;">🌐</span>
@@ -2410,28 +2478,114 @@
             }
         });
 
-        // --- JavaScript Based Print Function (100% Reliable for Mobile) ---
+        // --- JavaScript Based Print Function (100% Reliable for Mobile & Android) ---
+        let currentPrintTitle = '';
+        let currentPrintHtml = '';
+
         function triggerPrint(elementId, titleText) {
-            // Get the HTML of the table to print
-            const printContent = document.getElementById(elementId).querySelector('table').outerHTML;
-            
-            // Create a completely separate print container dynamically
+            var list = (elementId.indexOf('round') !== -1) ? roundWoodList : flatWoodList;
+            if (!list || list.length === 0) {
+                showToast("তালিকা খালি! প্রিন্ট করার জন্য অন্তত একটি কাঠের হিসাব যোগ করুন।", "⚠️", 3000);
+                return;
+            }
+
+            var reportArea = document.getElementById(elementId);
+            if (!reportArea) return;
+            var tableEl = reportArea.querySelector('table');
+            if (!tableEl) return;
+
+            var printContent = `
+                <div class="print-header" style="text-align:center; margin-bottom:15px; border-bottom:2px solid #000; padding-bottom:10px;">
+                    <h2 style="margin:0; font-size:22px; color:#000; font-weight:800;">জমি ও কাঠ পরিমাপ</h2>
+                    <p style="margin:4px 0 0 0; font-size:15px; color:#333; font-weight:600;">${titleText}</p>
+                    <p style="margin:4px 0 0 0; font-size:12px; color:#666;">তারিখ: ${new Date().toLocaleDateString('bn-BD')}</p>
+                </div>
+                ${tableEl.outerHTML}
+                <div style="margin-top:15px; text-align:right; font-size:12px; color:#555;">
+                    ডিজিটাল ক্যালকুলেটর দ্বারা প্রস্তুতকৃত নির্ভুল রিপোর্ট
+                </div>
+            `;
+
+            currentPrintTitle = titleText;
+            currentPrintHtml = printContent;
+
+            // 1. Android Native App Print via PrintManager
+            if (window.AndroidBridge && window.AndroidBridge.printDocument) {
+                window.AndroidBridge.printDocument(titleText);
+                return;
+            }
+
+            // 2. Browser Environment Print
             let printDiv = document.getElementById('print_container');
-            if(!printDiv) {
+            if (!printDiv) {
                 printDiv = document.createElement('div');
                 printDiv.id = 'print_container';
                 document.body.appendChild(printDiv);
             }
-            
-            printDiv.innerHTML = `
-                <div class="print-header">
-                    <h2>জমি ও কাঠ পরিমাপ</h2>
-                    <p>${titleText}</p>
-                </div>
-                ${printContent}
-            `;
-            
-            window.print();
+            printDiv.innerHTML = printContent;
+
+            try {
+                const isIframe = (window.self !== window.top);
+                if (isIframe) {
+                    openPrintPreviewModal(titleText, printContent);
+                } else {
+                    window.print();
+                }
+            } catch (err) {
+                openPrintPreviewModal(titleText, printContent);
+            }
+        }
+
+        function openPrintPreviewModal(title, html) {
+            const modal = document.getElementById('print_preview_modal');
+            const titleEl = document.getElementById('print_modal_title');
+            const bodyEl = document.getElementById('print_modal_body');
+            if (!modal) return;
+            if (titleEl) titleEl.innerText = title;
+            if (bodyEl) bodyEl.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closePrintPreviewModal() {
+            const modal = document.getElementById('print_preview_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function openStandalonePrintWindow() {
+            try {
+                const printWin = window.open('', '_blank');
+                if (printWin) {
+                    printWin.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>${currentPrintTitle}</title>
+                            <meta charset="utf-8">
+                            <style>
+                                body { font-family: system-ui, sans-serif; padding: 25px; color: #000; }
+                                table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                                th, td { border: 1px solid #000; padding: 8px 10px; text-align: center; }
+                                th { background: #f0f0f0; }
+                                @media print { body { padding: 0; } }
+                            </style>
+                        </head>
+                        <body>
+                            ${currentPrintHtml}
+                            <script>
+                                window.onload = function() {
+                                    window.print();
+                                };
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                    printWin.document.close();
+                } else {
+                    window.print();
+                }
+            } catch (e) {
+                window.print();
+            }
         }
 
         function toBengaliNum(engNum) {
@@ -3004,6 +3158,143 @@
             document.getElementById('res_hisab_rev').style.display = 'none';
         }
 
+        // ================= ২. নল এর হিসাব ক্যালকুলেটর =================
+        function calculateNolArea() {
+            let s_hat = parseFloat(document.getElementById('n_size_hat').value) || 0;
+            let s_bighat = parseFloat(document.getElementById('n_size_bighat').value) || 0;
+            let s_angul = parseFloat(document.getElementById('n_size_angul').value) || 0;
+            let oneNolInFeet = (s_hat * FT_PER_HAT) + (s_bighat * FT_PER_BIGHAT) + (s_angul * FT_PER_ANGUL);
+
+            if(oneNolInFeet <= 0) { alert("১ নলের মাপ সঠিকভাবে দিন।"); return; }
+
+            let l_nol = parseFloat(document.getElementById('n_l_nol').value) || 0;
+            let l_hat = parseFloat(document.getElementById('n_l_hat').value) || 0;
+            let l_bighat = parseFloat(document.getElementById('n_l_bighat').value) || 0;
+            let l_angul = parseFloat(document.getElementById('n_l_angul').value) || 0;
+
+            let w_nol = parseFloat(document.getElementById('n_w_nol').value) || 0;
+            let w_hat = parseFloat(document.getElementById('n_w_hat').value) || 0;
+            let w_bighat = parseFloat(document.getElementById('n_w_bighat').value) || 0;
+            let w_angul = parseFloat(document.getElementById('n_w_angul').value) || 0;
+
+            let lenFeet = (l_nol * oneNolInFeet) + (l_hat * FT_PER_HAT) + (l_bighat * FT_PER_BIGHAT) + (l_angul * FT_PER_ANGUL);
+            let widFeet = (w_nol * oneNolInFeet) + (w_hat * FT_PER_HAT) + (w_bighat * FT_PER_BIGHAT) + (w_angul * FT_PER_ANGUL);
+
+            if(lenFeet === 0 || widFeet === 0) { alert("দৈর্ঘ্য এবং প্রস্থের সঠিক মান দিন।"); return; }
+
+            let totalSqFeet = lenFeet * widFeet;
+            showAreaResult('res_nol_area', 'sqFt_n', 'shotok_n', 'mixed_n', totalSqFeet);
+
+            let totalShotok = totalSqFeet / SQ_FEET_PER_SHOTOK;
+            let totalKatha = totalShotok / 3.30;
+            let kuraCount = Math.floor(totalKatha / 20);
+            let kathaCount = Math.floor(totalKatha % 20);
+            let dhurCount = ((totalKatha % 20) - kathaCount) * 20;
+
+            let mixedText = "মোট: ";
+            if (kuraCount > 0) mixedText += toBengaliNum(kuraCount.toString()) + " কুড়া ";
+            if (kathaCount > 0 || kuraCount > 0) mixedText += toBengaliNum(kathaCount.toString()) + " কাঠা ";
+            mixedText += toBengaliNum(dhurCount.toFixed(2)) + " ধুর";
+
+            addHistoryRecord({
+                category: 'nol',
+                categoryName: 'নলের হিসাব (ক্ষেত্রফল)',
+                icon: '📏',
+                title: 'নল মাপে জমি পরিমাপ',
+                mainResult: toBengaliNum(totalShotok.toFixed(3)) + ' শতক',
+                subResult: toBengaliNum(totalSqFeet.toFixed(2)) + ' বর্গফুট | ' + mixedText,
+                inputs: [
+                    { label: '১ নল', val: toBengaliNum(s_hat.toString()) + ' হাত ' + toBengaliNum(s_bighat.toString()) + ' বিঘাত ' + toBengaliNum(s_angul.toString()) + ' আঙুল' },
+                    { label: 'দৈর্ঘ্য', val: toBengaliNum(l_nol.toString()) + ' নল ' + toBengaliNum(l_hat.toString()) + ' হাত ' + toBengaliNum(l_bighat.toString()) + ' বিঘাত ' + toBengaliNum(l_angul.toString()) + ' আঙুল' },
+                    { label: 'প্রস্থ', val: toBengaliNum(w_nol.toString()) + ' নল ' + toBengaliNum(w_hat.toString()) + ' হাত ' + toBengaliNum(w_bighat.toString()) + ' বিঘাত ' + toBengaliNum(w_angul.toString()) + ' আঙুল' }
+                ],
+                results: [
+                    { label: 'মোট ক্ষেত্রফল', val: toBengaliNum(totalSqFeet.toFixed(2)) + ' বর্গফুট' },
+                    { label: 'মোট শতক', val: toBengaliNum(totalShotok.toFixed(3)) + ' শতক' },
+                    { label: 'কাঠা/কুড়া/ধুর', val: mixedText }
+                ]
+            });
+        }
+
+        function clearNolArea() {
+            document.querySelectorAll('#nol_area input:not(#n_size_hat):not(#n_size_bighat):not(#n_size_angul)').forEach(function(inp) { inp.value = ''; });
+            document.getElementById('res_nol_area').style.display = 'none';
+        }
+
+        function calculateNolRev() {
+            let s_hat = parseFloat(document.getElementById('r_size_hat').value) || 0;
+            let s_bighat = parseFloat(document.getElementById('r_size_bighat').value) || 0;
+            let s_angul = parseFloat(document.getElementById('r_size_angul').value) || 0;
+            let oneNolInFeet = (s_hat * FT_PER_HAT) + (s_bighat * FT_PER_BIGHAT) + (s_angul * FT_PER_ANGUL);
+
+            if(oneNolInFeet <= 0) { alert("১ নলের মাপ সঠিকভাবে দিন।"); return; }
+
+            let targetArea = parseFloat(document.getElementById('r_target_area').value) || 0;
+            let unit = document.getElementById('r_area_unit').value;
+
+            let k_nol = parseFloat(document.getElementById('r_k_nol').value) || 0;
+            let k_hat = parseFloat(document.getElementById('r_k_hat').value) || 0;
+            let k_bighat = parseFloat(document.getElementById('r_k_bighat').value) || 0;
+            let k_angul = parseFloat(document.getElementById('r_k_angul').value) || 0;
+
+            let knownFeet = (k_nol * oneNolInFeet) + (k_hat * FT_PER_HAT) + (k_bighat * FT_PER_BIGHAT) + (k_angul * FT_PER_ANGUL);
+
+            if(targetArea <= 0 || knownFeet <= 0) { alert("জমির পরিমাণ এবং জানা দিকের মান দিন।"); return; }
+
+            let targetSqFt = targetArea * SQ_FEET_PER_SHOTOK;
+            if(unit === 'katha') targetSqFt *= 3.30;
+            else if(unit === 'kura') targetSqFt *= (3.30 * 20);
+
+            let reqFeet = targetSqFt / knownFeet;
+
+            let ansNol = Math.floor(reqFeet / oneNolInFeet);
+            let remFeet1 = reqFeet - (ansNol * oneNolInFeet);
+
+            let ansHat = Math.floor(remFeet1 / FT_PER_HAT);
+            let remFeet2 = remFeet1 - (ansHat * FT_PER_HAT);
+
+            let ansBighat = Math.floor(remFeet2 / FT_PER_BIGHAT);
+            let remFeet3 = remFeet2 - (ansBighat * FT_PER_BIGHAT);
+
+            let ansAngul = Math.round(remFeet3 / FT_PER_ANGUL);
+
+            let resText = "অজানা দিকের মাপ লাগবে:<br>";
+            let parts = [];
+            if (ansNol > 0) parts.push(toBengaliNum(ansNol.toString()) + " নল");
+            if (ansHat > 0) parts.push(toBengaliNum(ansHat.toString()) + " হাত");
+            if (ansBighat > 0) parts.push(toBengaliNum(ansBighat.toString()) + " বিঘাত");
+            if (ansAngul > 0) parts.push(toBengaliNum(ansAngul.toString()) + " আঙুল");
+            if (parts.length === 0) parts.push("০ নল");
+
+            resText += parts.join(" ") + "<br><span style='font-size:14px; color:#475569; font-weight:600;'>(মোট: " + toBengaliNum(reqFeet.toFixed(2)) + " ফুট)</span>";
+
+            document.getElementById('res_nol_rev').style.display = 'block';
+            document.getElementById('req_n_side').innerHTML = resText;
+
+            let unitName = unit === 'katha' ? 'কাঠা' : unit === 'kura' ? 'কুড়া' : 'শতক';
+            addHistoryRecord({
+                category: 'nol',
+                categoryName: 'নল প্রস্থ/দৈর্ঘ্য নির্ণয়',
+                icon: '📏',
+                title: 'নল রিভার্স পরিমাপ',
+                mainResult: parts.join(" "),
+                subResult: 'টার্গেট জমি: ' + toBengaliNum(targetArea.toString()) + ' ' + unitName + ', জানা দিক: ' + toBengaliNum(knownFeet.toFixed(1)) + ' ফুট',
+                inputs: [
+                    { label: '১ নল', val: toBengaliNum(s_hat.toString()) + ' হাত ' + toBengaliNum(s_bighat.toString()) + ' বিঘাত ' + toBengaliNum(s_angul.toString()) + ' আঙুল' },
+                    { label: 'টার্গেট জমি', val: toBengaliNum(targetArea.toString()) + ' ' + unitName },
+                    { label: 'জানা দিকের মাপ', val: toBengaliNum(k_nol.toString()) + ' নল ' + toBengaliNum(k_hat.toString()) + ' হাত ' + toBengaliNum(k_bighat.toString()) + ' বিঘাত ' + toBengaliNum(k_angul.toString()) + ' আঙুল' }
+                ],
+                results: [
+                    { label: 'অজানা দিকের মাপ লাগবে', val: parts.join(" ") + ' (মোট ' + toBengaliNum(reqFeet.toFixed(2)) + ' ফুট)' }
+                ]
+            });
+        }
+
+        function clearNolRev() {
+            document.querySelectorAll('#nol_rev input:not(#r_size_hat):not(#r_size_bighat):not(#r_size_angul)').forEach(function(inp) { inp.value = ''; });
+            document.getElementById('res_nol_rev').style.display = 'none';
+        }
+
         /* ---------------- মাটির হিসাব কোড ---------------- */
         function addMatiField(containerId) {
             const container = document.getElementById(containerId);
@@ -3300,7 +3591,32 @@
             return text;
         }
 
-        function fallbackCopyTextToClipboard(text) {
+        let activeShareText = '';
+        let activeShareTitle = '';
+
+        function copyReportText(type) {
+            var list = (type === 'round') ? roundWoodList : flatWoodList;
+            if (!list || list.length === 0) {
+                showToast("তালিকা খালি! কপি করার জন্য অন্তত একটি কাঠের হিসাব যোগ করুন।", "⚠️", 3000);
+                return;
+            }
+            let rawShareText = generateShareText(type);
+            copyTextDirectly(rawShareText, "রিপোর্ট সফলভাবে কপি করা হয়েছে! 📋");
+        }
+
+        function copyTextDirectly(text, successMsg) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function() {
+                    showToast(successMsg || "টেক্সট কপি করা হয়েছে! 📋", "✅", 3000);
+                }).catch(function(err) {
+                    fallbackCopyTextToClipboard(text, successMsg);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text, successMsg);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text, successMsg) {
             var textArea = document.createElement("textarea");
             textArea.value = text;
             textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed";
@@ -3308,35 +3624,90 @@
             textArea.focus(); textArea.select();
             try {
                 var successful = document.execCommand('copy');
-                if(successful) alert("রিপোর্ট কপি করা হয়েছে!");
-                else alert("কপি করতে সমস্যা হয়েছে!");
-            } catch (err) { alert("কপি করতে সমস্যা হয়েছে!"); }
+                if (successful) showToast(successMsg || "টেক্সট কপি করা হয়েছে! 📋", "✅", 3000);
+                else showToast("কপি করা যায়নি, অনুগ্রহ করে নিজে সিলেক্ট করে কপি করুন।", "⚠️", 3500);
+            } catch (err) {
+                showToast("কপি করা যায়নি!", "⚠️", 3000);
+            }
             document.body.removeChild(textArea);
         }
 
-        function copyReportText(type) {
-            let rawShareText = generateShareText(type);
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(rawShareText).then(function() {
-                    alert("রিপোর্ট কপি করা হয়েছে!");
-                }).catch(function(err) {
-                    fallbackCopyTextToClipboard(rawShareText);
-                });
-            } else {
-                fallbackCopyTextToClipboard(rawShareText);
-            }
-        }
-
         function shareReportText(type) {
+            var list = (type === 'round') ? roundWoodList : flatWoodList;
+            if (!list || list.length === 0) {
+                showToast("তালিকা খালি! শেয়ার করার জন্য অন্তত একটি কাঠের হিসাব যোগ করুন।", "⚠️", 3000);
+                return;
+            }
+
+            let title = (type === 'round') ? 'গোল কাঠের হিসাব রিপোর্ট' : 'চ্যাপ্টা কাঠের হিসাব রিপোর্ট';
             let rawShareText = generateShareText(type);
+            activeShareTitle = title;
+            activeShareText = rawShareText;
+
+            // 1. Android Native App Bridge (Opens Android System Share Sheet: WhatsApp, Messenger, SMS, etc.)
+            if (window.AndroidBridge && window.AndroidBridge.shareText) {
+                window.AndroidBridge.shareText(title, rawShareText);
+                return;
+            }
+
+            // 2. Web Share API (if supported)
             if (navigator.share) {
                 navigator.share({
-                    title: type === 'round' ? 'গোল কাঠের হিসাব' : 'চ্যাপ্টা কাঠের হিসাব',
+                    title: title,
                     text: rawShareText
-                }).catch(console.error);
-            } else {
-                alert("আপনার ব্রাউজার সরাসরি শেয়ার সাপোর্ট করে না।\nঅনুগ্রহ করে 'কপি' বাটনে ক্লিক করে টেক্সটটি শেয়ার করুন।");
+                }).then(function() {
+                    showToast("শেয়ার সম্পন্ন হয়েছে! 🎉", "✅", 2500);
+                }).catch(function(err) {
+                    if (err.name !== 'AbortError') {
+                        openShareModal(title, rawShareText);
+                    }
+                });
+                return;
             }
+
+            // 3. Browser Fallback: Open interactive Share modal
+            openShareModal(title, rawShareText);
+        }
+
+        function openShareModal(title, text) {
+            activeShareTitle = title;
+            activeShareText = text;
+            const modal = document.getElementById('share_options_modal');
+            const titleEl = document.getElementById('share_modal_title');
+            const previewEl = document.getElementById('share_preview_text');
+            if (!modal) return;
+            if (titleEl) titleEl.innerText = title;
+            if (previewEl) previewEl.value = text;
+            copyTextDirectly(text, "রিপোর্ট কপি হয়েছে! নিচে WhatsApp বা মেসেজে পাঠিয়ে দিন:");
+            modal.style.display = 'flex';
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('share_options_modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function shareViaWhatsApp() {
+            if (!activeShareText) return;
+            const url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(activeShareText);
+            window.open(url, '_blank');
+        }
+
+        function shareViaSMS() {
+            if (!activeShareText) return;
+            const url = 'sms:?body=' + encodeURIComponent(activeShareText);
+            window.location.href = url;
+        }
+
+        function shareViaEmail() {
+            if (!activeShareText) return;
+            const url = 'mailto:?subject=' + encodeURIComponent(activeShareTitle || 'হিসাব রিপোর্ট') + '&body=' + encodeURIComponent(activeShareText);
+            window.location.href = url;
+        }
+
+        function copyShareTextDirect() {
+            if (!activeShareText) return;
+            copyTextDirectly(activeShareText, "রিপোর্ট কপি করা হয়েছে! 📋");
         }
     </script>
 </body>

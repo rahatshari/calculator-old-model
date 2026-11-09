@@ -2,9 +2,12 @@ package com.calculator.landwood
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.print.PrintAttributes
+import android.print.PrintManager
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         settings.displayZoomControls = false
         settings.builtInZoomControls = false
 
-        // Bridge for In-App Auto Updates and Native Communication
+        // Bridge for In-App Auto Updates, Native Printing & Native Sharing
         webView.addJavascriptInterface(AndroidUpdater(this, webView), "AndroidBridge")
 
         webView.webViewClient = object : WebViewClient() {
@@ -51,8 +54,8 @@ class MainActivity : AppCompatActivity() {
                 if (url != null && url.startsWith("file:///android_asset/")) {
                     return false
                 }
-                // Open external links (like github releases) in external browser if clicked
-                if (url != null && (url.startsWith("http://") || url.startsWith("https://"))) {
+                // Open external links (e.g., whatsapp, sms, external URLs) in system handler
+                if (url != null && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("whatsapp://") || url.startsWith("sms:") || url.startsWith("mailto:"))) {
                     try {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                         startActivity(intent)
@@ -94,6 +97,46 @@ class MainActivity : AppCompatActivity() {
                 pInfo.versionName ?: "1.0.0"
             } catch (e: Exception) {
                 "1.0.0"
+            }
+        }
+
+        // Native Android Print / PDF generation
+        @JavascriptInterface
+        fun printDocument(title: String) {
+            activity.runOnUiThread {
+                try {
+                    val printManager = activity.getSystemService(Context.PRINT_SERVICE) as? PrintManager
+                    if (printManager != null) {
+                        val printAdapter = webView.createPrintDocumentAdapter(title)
+                        val jobName = "জমি ও কাঠ - $title"
+                        printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
+                    } else {
+                        Toast.makeText(activity, "প্রিন্ট সেবা উপলব্ধ নেই", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(activity, "প্রিন্ট করতে সমস্যা: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // Native Android Share Sheet (WhatsApp, IMO, Messenger, SMS, Bluetooth, etc.)
+        @JavascriptInterface
+        fun shareText(title: String, text: String) {
+            activity.runOnUiThread {
+                try {
+                    val sendIntent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, text)
+                        putExtra(Intent.EXTRA_SUBJECT, title)
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, title).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    activity.startActivity(shareIntent)
+                } catch (e: Exception) {
+                    Toast.makeText(activity, "শেয়ার করতে সমস্যা: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
